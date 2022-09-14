@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+
+  front:
+    build: ./
+    command: yarn dev
+    working_dir: /app/poster
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app/poster
