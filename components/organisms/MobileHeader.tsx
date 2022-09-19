@@ -8,19 +8,19 @@ export interface SearchBoxProps {
 const categories = [
     {
         title: "mobile",
-        icon: "MobileIcon"
+        icon: "mobile"
     },
     {
         title: "search",
-        icon: "SearchIcon"
+        icon: "search"
     },
     {
         title: "map",
-        icon: "MapIcon",
+        icon: "map",
     },
     {
         title: "cars",
-        icon: "CarIcon",
+        icon: "car",
     },
 ];
 
