@@ -8,7 +8,7 @@ export interface SearchBoxProps {
 const categories = [
     {
         title: "mobile",
-        icon: "MobileIco"
+        icon: "MobileIcon"
     },
     {
         title: "search",
