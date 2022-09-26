@@ -1,12 +1,16 @@
 version: '3.8'
 
+volumes:
+ poster_frontend_node_modules:
+
 services:
 
   front:
     build: ./
-    command: yarn dev
+    command: npm run dev
     working_dir: /app/poster
     ports:
       - "3000:3000"
     volumes:
       - ./:/app/poster
+      - poster_frontend_node_modules:/app/poster/node_modules

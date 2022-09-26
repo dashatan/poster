@@ -1,7 +1,9 @@
-FROM node:18.6
+FROM node:18
 
 WORKDIR /app/poster
 
-COPY ./ ./
+COPY package.json ./
 
-RUN  yarn install
+RUN  npm install
+
+COPY ./ ./
