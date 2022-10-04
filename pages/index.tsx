@@ -1,8 +1,20 @@
 import type { NextPage } from "next";
-import HomeProvider from "../components/providers/HomeProvider";
+import { categories } from "../app/static/categories";
+import { posts } from "../app/static/posts";
+import Home from "../components/templates/phone/Home";
 
-const Home: NextPage = () => {
-    return (<HomeProvider/>);
+const HomePage: NextPage = () => {
+    
+    return (
+        <Home
+            icons={categories}
+            posts={posts}
+            placeHolders={{
+                selectPlaceHolder: "Tehran",
+                searchPlaceHolder: "Search For New Ads",
+            }}
+        />
+    );
 };
 
-export default Home;
+export default HomePage;

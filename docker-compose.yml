@@ -1,8 +1,5 @@
 version: '3.8'
 
-volumes:
- poster_frontend_node_modules:
-
 services:
 
   front:
@@ -13,4 +10,4 @@ services:
       - "3000:3000"
     volumes:
       - ./:/app/poster
-      - poster_frontend_node_modules:/app/poster/node_modules
+      - /app/poster/node_modules
