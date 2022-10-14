@@ -15,7 +15,7 @@ export interface PostCardProps {
     imageUrl?: string;
 }
 
-const PostCard = (props: PostCardProps) => {
+export default function PostCard(props: PostCardProps) {
     const { title, description1, description2, description3, imageUrl } = props;
 
     const image = imageUrl ? (
@@ -42,6 +42,4 @@ const PostCard = (props: PostCardProps) => {
             <PostCardImage>{image}</PostCardImage>
         </PostCardContainer>
     );
-};
-
-export default PostCard;
+}

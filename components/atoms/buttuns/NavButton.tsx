@@ -1,22 +1,16 @@
-import { useRouter } from "next/router";
 import { HeroIcon } from "../../templates/phone/Home";
 
 export interface IconCardProps {
     Icon: HeroIcon;
     title: string;
-    href?: string;
+    onClick?: () => void;
 }
 
-const NavButton = ({ Icon, title, href }: IconCardProps) => {
-    const router = useRouter();
-    const handleClick = () => {
-        if (href) {
-            router.push(href);
-        }
-    };
+const NavButton = ({ Icon, title, onClick }: IconCardProps) => {
+    
     return (
         <div
-            onClick={handleClick}
+            onClick={onClick}
             className="flex flex-col items-center  gap-1 w-11"
         >
             <div className="flex items-center justify-center">

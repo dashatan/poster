@@ -3,6 +3,9 @@ import IconCard from "../../molecules/cards/IconCard";
 import PostCard, { PostCardProps } from "../../molecules/cards/PostCard";
 import SearchBoxWithSelect from "../../molecules/search_boxes/SearchBoxWithSelect";
 import ViewportList from "react-viewport-list";
+import { ListItem } from "../../organisms/lists/VerticalList";
+import { Router, useRouter } from "next/router";
+
 
 export interface HomeProps {
     icons: { title: string; Icon: HeroIcon }[];
@@ -11,12 +14,14 @@ export interface HomeProps {
         selectPlaceHolder: string;
         searchPlaceHolder: string;
     };
+    onIconCardClick: (item: ListItem)=>void
 }
 
 export type HeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element;
 
 const Home = (props: HomeProps) => {
-    const { placeHolders, icons, posts } = props;
+    const router = useRouter();
+    const { placeHolders, icons, posts, onIconCardClick } = props;
     const ref = useRef(null);
     
     return (
@@ -25,12 +30,14 @@ const Home = (props: HomeProps) => {
                 <SearchBoxWithSelect
                     selectPlaceHolder={placeHolders.selectPlaceHolder}
                     searchPlaceHolder={placeHolders.searchPlaceHolder}
+                    onSearchBarClick={() => router.push("/search")}
+                    onSelectClick={() => router.push("/region")}
                 />
                 <div className="flex w-full gap-5 mt-4 overflow-x-auto overflow-y-hidden hide-scrollbar">
                     {icons.map((item, index) => {
                         const { title, Icon } = item;
                         return (
-                            <IconCard key={index} title={title} Icon={Icon} />
+                            <IconCard key={index} title={title} Icon={Icon} onClick={()=> onIconCardClick(item)} />
                         );
                     })}
                 </div>

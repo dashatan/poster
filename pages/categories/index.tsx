@@ -1,10 +1,21 @@
+import { useRouter } from "next/router";
+import { categories } from "../../app/static/categories";
+import SelectiveList, {
+    ListItem,
+} from "../../components/templates/phone/SelectiveList";
 
-const Categories = () => {
+export default function Categories() {
+    const router = useRouter();
+
+    const handleClick = (item: ListItem) => {
+        router.push(`${router.asPath}/${item.title}`);
+    };
+
     return (
-        <div>
-            <h1>Categories</h1>
-        </div>
+        <SelectiveList
+            heading="Categories"
+            listItems={categories}
+            onItemClick={handleClick}
+        />
     );
-};
-
-export default Categories;
+}
