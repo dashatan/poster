@@ -3,12 +3,13 @@ import IconCard from "../../molecules/cards/IconCard";
 import PostCard, { PostCardProps } from "../../molecules/cards/PostCard";
 import SearchBoxWithSelect from "../../molecules/search_boxes/SearchBoxWithSelect";
 import ViewportList from "react-viewport-list";
-import { ListItem } from "../../organisms/lists/VerticalList";
 import { Router, useRouter } from "next/router";
+import { ListItem } from "./SelectiveList";
+import { DocumentMagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 
 export interface HomeProps {
-    icons: { title: string; Icon: HeroIcon }[];
+    icons: ListItem[];
     posts: PostCardProps[];
     placeHolders: {
         selectPlaceHolder: string;
@@ -37,7 +38,7 @@ const Home = (props: HomeProps) => {
                     {icons.map((item, index) => {
                         const { title, Icon } = item;
                         return (
-                            <IconCard key={index} title={title} Icon={Icon} onClick={()=> onIconCardClick(item)} />
+                            <IconCard key={index} title={title} Icon={Icon || DocumentMagnifyingGlassIcon} onClick={()=> onIconCardClick(item)} />
                         );
                     })}
                 </div>

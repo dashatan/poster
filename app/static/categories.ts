@@ -3,11 +3,11 @@ import {
     BuildingOfficeIcon,
     DevicePhoneMobileIcon,
     TruckIcon,
-    TvIcon,
     UserGroupIcon,
     WrenchIcon,
 } from "@heroicons/react/24/outline";
-export const categories = [
+import { ListItem } from "../../components/templates/phone/SelectiveList";
+export const categories: ListItem[] = [
     {
         title: "estate",
         Icon: BuildingOfficeIcon,

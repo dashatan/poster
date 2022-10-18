@@ -6,9 +6,11 @@ import BottomNav from "../../components/organisms/footers/BottomNav";
 import SelectiveList, {
     ListItem,
 } from "../../components/templates/phone/SelectiveList";
+import useNavItems from "../../app/customHooks/useNavItems";
 
 export default function Province() {
     const router = useRouter();
+    const navItems = useNavItems();
     const { province } = router.query;
 
     function handleClick(item: ListItem) {
@@ -19,7 +21,7 @@ export default function Province() {
         return (
             <>
                 <Error statusCode={404} />
-                <BottomNav />
+                <BottomNav navItems={navItems} />
             </>
         );
     }
@@ -32,8 +34,8 @@ export default function Province() {
         <SelectiveList
             heading={currentProvince.title_en}
             listItems={currentCities}
-            titleVariableName="slug"
-            onItemClick={handleClick}
+            asOptionTitle="slug"
+            onChange={handleClick}
         />
     );
 }

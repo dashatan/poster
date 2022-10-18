@@ -15,8 +15,8 @@ export default function Region() {
         <SelectiveList
             heading="Provinces"
             listItems={provinces}
-            titleVariableName="title_en"
-            onItemClick={handleClick}
+            asOptionTitle="title_en"
+            onChange={handleClick}
             withNavigationIcon={true}
         />
     );

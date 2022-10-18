@@ -8,14 +8,16 @@ export default function Categories() {
     const router = useRouter();
 
     const handleClick = (item: ListItem) => {
-        router.push(`${router.asPath}/${item.title}`);
+        // router.push(`${router.asPath}/${item.title}`);
+        router.back();
     };
 
     return (
         <SelectiveList
             heading="Categories"
             listItems={categories}
-            onItemClick={handleClick}
+            onChange={handleClick}
+            withRouter
         />
     );
 }

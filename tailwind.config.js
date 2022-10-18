@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+const plugin = require("tailwindcss/plugin");
+
 module.exports = {
     content: [
         "./pages/**/*.{js,ts,jsx,tsx}",
@@ -45,8 +48,12 @@ module.exports = {
             minWidth: {
                 32: "8rem"
             }
-        }
-        
+        },
     },
-    darkMode: "class"
+    darkMode: "class",
+    plugins: [
+        plugin(function({ addVariant }) {
+            addVariant("group-clicked", ":merge(.group).clicked &");
+        })
+    ]
 };

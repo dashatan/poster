@@ -1,5 +1,5 @@
-import setDarkMode from "../../app/funcs/setDarkMode";
-import Button from "../../components/atoms/buttuns/Button";
+import setDarkMode from "../../app/customHooks/useDarkMode";
+import Button from "../../components/atoms/buttons/Button";
 
 const Profile = () => {
     const handleDarkMode = () => {
