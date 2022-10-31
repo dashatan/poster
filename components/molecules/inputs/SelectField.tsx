@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import Portal from "../../templates/phone/Portal";
 import SelectiveList, { ListItem } from "../../templates/phone/SelectiveList";
-import FormFieldCard from "../cards/FormFieldCard";
+import FormFieldCard, { beautifyWord } from "../cards/FormFieldCard";
 
 export interface SelectFieldProps {
     label: string;
@@ -10,18 +11,19 @@ export interface SelectFieldProps {
     asOptionTitle?: string;
     onClick?: () => void;
     onChange?: (item: ListItem) => void;
-    options?: ListItem[];
+    options: ListItem[];
     withSearch?: boolean;
+    url?: string;
+    variant?: string;
 }
 
 export default function SelectField(props: SelectFieldProps) {
-    const [value, setValue] = useState(props.value);
     const router = useRouter();
-    const modal = router.query.select;
-    useEffect(() => {}, []);
+    const queryString = router.query.select;
+    const slug = props.label.replace(/ /g, "-");
 
     function modalRouter() {
-        router.push(router.asPath + `?select=${props.label}`);
+        router.push(router.asPath + `?select=${slug}`);
     }
 
     function handleChange(item: ListItem) {
@@ -29,33 +31,45 @@ export default function SelectField(props: SelectFieldProps) {
         router.back();
     }
 
+    const selectiveList = (
+        <Portal>
+            <div className={"fixed top-0 left-0 h-screen w-full"}>
+                <SelectiveList
+                    heading={props.label}
+                    withSearch={props.withSearch}
+                    asOptionTitle={props.asOptionTitle}
+                    listItems={props.options}
+                    url={props.url}
+                    onChange={handleChange}
+                />
+            </div>
+        </Portal>
+    );
+
+    const minimalList = <div></div>;
+
+    const modal = () => {
+        switch (props.variant) {
+        case "minimal":
+            return minimalList;
+
+        default:
+            return selectiveList;
+        }
+    };
+
+    const showModal =
+        queryString && typeof queryString === "string" && queryString.toLowerCase() === slug.toLowerCase();
+
+    const displayVal = props.value ? props.value.replace(/-/g, " ") : "";
+
     return (
         <>
-            <FormFieldCard
-                clicked={!!value}
-                label={props.label}
-                onClick={modalRouter}
-            >
-                <>
-                    <div className="text-xl text-dark-8 dark:text-dark-3">
-                        {value}
-                    </div>
-                    <div>
-                        <ChevronRightIcon className="w-6 text-dark-6 dark:text-dark-4 rtl:rotate-180" />
-                    </div>
-                </>
+            <FormFieldCard clicked={!!props.value} label={props.label} onClick={modalRouter}>
+                <div className="text-base text-dark-8 dark:text-dark-3">{beautifyWord(displayVal)}</div>
+                <ChevronRightIcon className="w-6 text-dark-6 dark:text-dark-4 rtl:rotate-180" />
             </FormFieldCard>
-            {modal && modal === props.label && (
-                <div className={"fixed top-0 left-0 h-screen w-full z-10"}>
-                    <SelectiveList
-                        heading={props.label}
-                        withSearch={props.withSearch}
-                        asOptionTitle={props.asOptionTitle}
-                        listItems={props.options}
-                        onChange={handleChange}
-                    />
-                </div>
-            )}
+            {showModal && modal()}
         </>
     );
 }

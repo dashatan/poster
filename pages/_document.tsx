@@ -6,6 +6,7 @@ export default function Document() {
             <Head />
             <body className="overflow-hidden">
                 <Main />
+                <div id="portal"/>
                 <NextScript />
             </body>
         </Html>

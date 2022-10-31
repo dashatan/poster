@@ -1,9 +1,5 @@
-import { ListItem } from "../../components/templates/phone/SelectiveList";
+import { Filters } from "../types";
 import { CONSTANTS } from "./CONSTANTS";
-
-export interface Filters {
-    [x: string]: string ;
-}
 
 export const filters: Filters = {
     [CONSTANTS.CATEGORY]: "",

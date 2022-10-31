@@ -1,22 +1,22 @@
 import { useRouter } from "next/router";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import ViewportList from "react-viewport-list";
+import Fuse from "fuse.js";
 import ListItemCard from "../../molecules/cards/ListItemCard";
 import SearchField from "../../molecules/inputs/SearchField";
 import PhoneTopHeader from "../../organisms/headers/PhoneTopHeader";
-import { HeroIcon } from "./Home";
+import FullScreenModal from "./FullScreenModal";
 
 export interface ListItem {
-    id?: number | string;
     title: string;
-    slug?: string;
-    title_en?: string;
-    Icon?: HeroIcon;
-    subset?: ListItem[];
+    slug: string;
+    parentSlug: string;
+    icon?: string;
 }
+
 export interface SelectiveListProps {
     heading: string;
-    listItems?: ListItem[];
+    listItems: ListItem[];
     onChange?: (item: ListItem) => void;
     onBackBtnClick?: () => void;
     withNavigationIcon?: boolean;
@@ -25,98 +25,96 @@ export interface SelectiveListProps {
     withRouter?: boolean;
     url?: string;
 }
-export interface T {
-    [key: string]: string;
-}
 
 export default function SelectiveList(props: SelectiveListProps) {
-    const { onChange, withNavigationIcon, asOptionTitle } = props;
     const router = useRouter();
     const ref = useRef(null);
     const [url, setUrl] = useState(props.url || "");
-    const [items, setItems] = useState(props.url ? getItemsByUrl(props.url) : props.listItems);
+    const [items, setItems] = useState<ListItem[]>([]);
+    const [searchedItems, setSearchedItems] = useState<Fuse.FuseResult<ListItem>[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
 
-    function getTitle(item: ListItem) {
-        const t = asOptionTitle;
-        return t ? (item as unknown as T)[t] : item.title;
-    }
+    const isRoot = props.url ? url === props.url : url === "";
+    const fuse = new Fuse(
+        props.listItems.filter((x) => !hasChildren(x)),
+        { keys: ["title"] }
+    );
+
+    useEffect(() => {
+        function getItems() {
+            if (isRoot) return props.listItems.filter((x) => x.parentSlug === url);
+            const slugs = url.split("/");
+            const lastSlug = slugs[slugs.length - 1];
+            const newItems = props.listItems.filter((x) => x.parentSlug === lastSlug);
+            return newItems;
+        }
+        setItems(getItems());
+    }, [isRoot, props.listItems, url]);
 
     function handleClick(item: ListItem) {
-        if (item.subset) {
-            const title = getTitle(item);
-            const newUrl = `${url}/${title}`;
+        if (hasChildren(item)) {
+            const newUrl = `${url}/${item.slug}`;
             setUrl(newUrl);
-            setItems(getItemsByUrl(newUrl));
-            props.withRouter && router.push(router.asPath + "/" + title);
+            props.withRouter && router.push(router.asPath + "/" + item.slug);
         } else {
-            onChange && onChange(item);
+            props.onChange && props.onChange(item);
         }
     }
 
     function handleSearch(event: ChangeEvent<HTMLInputElement>) {
         const value = event.target.value;
         setSearchTerm(value);
-        const currentItems = getItemsByUrl(url);
-        let f = !value
-            ? currentItems
-            : currentItems &&
-              currentItems.filter((x) => {
-                  const title = getTitle(x);
-                  return title.toLowerCase().includes(value.toLowerCase());
-              });
-        setItems(f);
+        let s = fuse.search(value);
+        setSearchedItems(s);
     }
 
     function handleBackBtn() {
-        let u = url.split("/");
-        u = u.filter((x) => x !== u[u.length - 1]);
-        const newUrl = u.join("/");
-        setUrl(newUrl);
-        setItems(getItemsByUrl(newUrl));
+        if (isRoot) return router.back();
+        setUrl((url) => url.substring(0, url.lastIndexOf("/")));
         props.withRouter && router.back();
     }
 
-    function getItemsByUrl(url: string) {
-        let slugs = url.split("/");
-        let newItems = props.listItems || [];
-        slugs.forEach((slug) => {
-            const item = newItems.find((x) => {
-                const title = getTitle(x);
-                return title.toLowerCase() === slug.toLowerCase();
-            });
-            newItems = item && item.subset ? item.subset : newItems;
-        });
-
-        return newItems;
+    function hasChildren(item: ListItem) {
+        const children = props.listItems.filter((x) => x.parentSlug === item.slug);
+        return children.length > 0;
     }
 
     function getHeading() {
-        let u = url.split("/");
-        return u[u.length - 1] || props.heading;
+        if (isRoot) return props.heading;
+        const slugs = url.split("/");
+        const lastSlug = slugs[slugs.length - 1];
+        const item = props.listItems.find((x) => x.slug === lastSlug);
+        return item ? item.title : lastSlug.replace(/-/g, " ");
     }
 
+    const itemCard = (item: ListItem) => {
+        const { title, icon, slug } = item;
+
+        return (
+            <ListItemCard
+                key={slug}
+                title={title}
+                icon={icon}
+                withNavigationIcon={props.withNavigationIcon || hasChildren(item)}
+                onClick={() => handleClick(item)}
+            />
+        );
+    };
+
     return (
-        <div className="h-screen bg-light-2 dark:bg-dark-6">
-            <PhoneTopHeader text={getHeading()} withBackBtn onBackBtnClick={url ? handleBackBtn : undefined} />
-            <div className="px-2 overflow-y-auto h-[calc(100%_-_theme(space.10))]" ref={ref}>
+        <FullScreenModal heading={getHeading()} onBackBtnClick={handleBackBtn}>
+            <ul className="overflow-y-auto h-full hide-scrollbar" ref={ref}>
                 {props.withSearch && <SearchField value={searchTerm} onChange={handleSearch} placeHolder="search" />}
-                <ViewportList viewportRef={ref} items={items}>
-                    {(item) => {
-                        const { id, title, Icon, subset } = item;
-                        const t = asOptionTitle;
-                        return (
-                            <ListItemCard
-                                key={id || title}
-                                title={t ? (item as unknown as T)[t] : title}
-                                Icon={Icon}
-                                withNavigationIcon={withNavigationIcon || !!subset}
-                                onClick={() => handleClick(item)}
-                            />
-                        );
-                    }}
-                </ViewportList>
-            </div>
-        </div>
+                {!searchTerm ? (
+                    <ViewportList viewportRef={ref} items={items}>
+                        {(item: ListItem) => itemCard(item)}
+                    </ViewportList>
+                ) : (
+                    <ViewportList viewportRef={ref} items={searchedItems}>
+                        {(item) => itemCard(item.item)}
+                    </ViewportList>
+                )}
+            </ul>
+        </FullScreenModal>
     );
 }

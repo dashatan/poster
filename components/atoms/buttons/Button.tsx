@@ -1,17 +1,28 @@
 import { ReactNode } from "react";
 
 export interface ButtonProps {
-    children: ReactNode;
-    className?: string;
+    label: string;
+    color?: "blue" | "red" | "green";
     onClick?: () => void;
 }
-const Button = ({ children, className, onClick }: ButtonProps) => {
+const Button = (props: ButtonProps) => {
+    const classes = [
+        "w-full",
+        "h-10",
+        "p-2",
+        "border-2",
+        `bg-${props.color || "blue"}-4`,
+        "text-dark-8",
+        "border-dark-6",
+        "rounded-lg",
+        "flex",
+        "justify-around",
+        "items-center",
+    ];
+
     return (
-        <div
-            className={`${className ? className : ""} w-20 p-2 text-base border-2 border-dark-2 rounded-lg flex justify-around align-middle`}
-            onClick={onClick}
-        >
-            {children}
+        <div className={classes.join(" ") + ""} onClick={props.onClick}>
+            {props.label}
         </div>
     );
 };

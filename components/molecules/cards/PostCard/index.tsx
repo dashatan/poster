@@ -9,23 +9,17 @@ import PostCardTitle from "./PostCardTitle";
 
 export interface PostCardProps {
     title: string;
-    description1?: string;
-    description2?: string;
-    description3?: string;
-    imageUrl?: string;
+    topDescription?: string;
+    middleDescription?: string;
+    bottomDescription?: string;
+    thumbnail?: string;
 }
 
 export default function PostCard(props: PostCardProps) {
-    const { title, description1, description2, description3, imageUrl } = props;
+    const { title, topDescription, middleDescription, bottomDescription, thumbnail } = props;
 
-    const image = imageUrl ? (
-        <Image
-            alt={title}
-            src={imageUrl}
-            width="128"
-            height="128"
-            className="rounded-xl"
-        />
+    const image = thumbnail ? (
+        <Image alt={title} src={thumbnail} width="128" height="128" className="rounded-xl" />
     ) : (
         <PostCardImagePlaceHolder />
     );
@@ -34,9 +28,9 @@ export default function PostCard(props: PostCardProps) {
             <PostCardBody>
                 <PostCardTitle>{title}</PostCardTitle>
                 <div>
-                    <PostCardDescription>{description1}</PostCardDescription>
-                    <PostCardDescription>{description2}</PostCardDescription>
-                    <PostCardTip>{description3}</PostCardTip>
+                    <PostCardDescription>{topDescription}</PostCardDescription>
+                    <PostCardDescription>{middleDescription}</PostCardDescription>
+                    <PostCardTip>{bottomDescription}</PostCardTip>
                 </div>
             </PostCardBody>
             <PostCardImage>{image}</PostCardImage>

@@ -2,7 +2,7 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import { ChangeEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { text } from "../../app/searchSlice";
+import { text } from "../../app/slices/search";
 import { RootState } from "../../app/store";
 
 const Search = () => {

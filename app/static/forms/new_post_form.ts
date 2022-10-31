@@ -2,19 +2,19 @@ import { categories } from "../categories";
 import { cities } from "../cities";
 import { CONSTANTS } from "../CONSTANTS";
 
-export const createPostFields = [
+export const newPost = [
     {
         elementType: CONSTANTS.SELECT,
         label: CONSTANTS.CATEGORY,
         options: categories,
-        asTitle: CONSTANTS.TITLE,
-        asValue: CONSTANTS.TITLE
+        asOptionTitle: CONSTANTS.TITLE,
+        asValue: CONSTANTS.TITLE,
     },
     {
         elementType: CONSTANTS.SELECT,
         label: CONSTANTS.CITY,
         options: cities,
-        asTitle: CONSTANTS.SLUG,
+        asOptionTitle: CONSTANTS.SLUG,
         asValue: CONSTANTS.SLUG,
         withSearch: true,
     },
