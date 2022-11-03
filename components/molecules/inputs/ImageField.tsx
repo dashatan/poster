@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { CameraIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { randomUUID } from "crypto";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import Alert from "../alerts/Alert";
 import Expire from "../alerts/Expire";
 

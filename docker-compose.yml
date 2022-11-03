@@ -1,13 +1,10 @@
 version: '3.8'
-
 services:
-
-  front:
+  service:
+    container_name: poster
     build: ./
-    command: npm run dev
-    working_dir: /app/poster
     ports:
       - "3000:3000"
     volumes:
-      - ./:/app/poster
-      - /app/poster/node_modules
+      - ./:/services/poster
+    command: /services/poster/entrypoint.sh

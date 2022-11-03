@@ -10,14 +10,14 @@ import { RootState } from "../app/store";
 const HomePage: NextPage = () => {
     const router = useRouter();
     const search = useAppSelector((state: RootState) => state.search);
-    
+
     return (
         <PhoneLayout>
             <Home
                 icons={categories}
                 posts={posts}
                 placeHolders={{
-                    selectPlaceHolder: "Tehran",
+                    selectPlaceHolder: "tabriz",
                     searchPlaceHolder: "",
                 }}
                 onIconCardClick={(item) =>
