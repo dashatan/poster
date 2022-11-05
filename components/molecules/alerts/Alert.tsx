@@ -3,9 +3,22 @@ export interface AlertProps {
     text: string;
 }
 export default function Alert(props: AlertProps) {
-    return (
-        <div className={"w-full p-8 text-center rounded-lg flex justify-center items-center" + ` bg-${props.color}-4`}>
-            {props.text}
-        </div>
-    );
+  let color 
+  switch (props.color) {
+  case "blue":
+    color = "bg-blue-4"
+    break
+  case "green":
+    color = "bg-green-4"
+    break
+        
+  default:
+    color = "bg-red-4"
+    break
+  }
+  return (
+    <div className={"w-full p-8 text-center rounded-lg flex justify-center items-center " + color}>
+      {props.text}
+    </div>
+  )
 }

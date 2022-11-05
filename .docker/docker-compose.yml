@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  service:
+    container_name: Poster
+    image: poster:latest
+    build: ./
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../:/services/poster
+    command: /services/poster/.docker/entrypoint.sh

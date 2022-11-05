@@ -1,11 +1,11 @@
-import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import ViewportList from "react-viewport-list";
-import Fuse from "fuse.js";
-import ListItemCard from "../../molecules/cards/ListItemCard";
-import SearchField from "../../molecules/inputs/SearchField";
-import PhoneTopHeader from "../../organisms/headers/PhoneTopHeader";
-import FullScreenModal from "./FullScreenModal";
+import { useRouter } from "next/router"
+import { ChangeEvent, useEffect, useRef, useState } from "react"
+import ViewportList from "react-viewport-list"
+import Fuse from "fuse.js"
+import ListItemCard from "../../molecules/cards/ListItemCard"
+import SearchField from "../../molecules/inputs/SearchField"
+import PhoneTopHeader from "../../organisms/headers/PhoneTopHeader"
+import FullScreenModal from "./FullScreenModal"
 
 export interface ListItem {
     title: string;
@@ -27,94 +27,94 @@ export interface SelectiveListProps {
 }
 
 export default function SelectiveList(props: SelectiveListProps) {
-    const router = useRouter();
-    const ref = useRef(null);
-    const [url, setUrl] = useState(props.url || "");
-    const [items, setItems] = useState<ListItem[]>([]);
-    const [searchedItems, setSearchedItems] = useState<Fuse.FuseResult<ListItem>[]>([]);
-    const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter()
+  const ref = useRef(null)
+  const [url, setUrl] = useState(props.url || "")
+  const [items, setItems] = useState<ListItem[]>([])
+  const [searchedItems, setSearchedItems] = useState<Fuse.FuseResult<ListItem>[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
 
-    const isRoot = props.url ? url === props.url : url === "";
-    const fuse = new Fuse(
-        props.listItems.filter((x) => !hasChildren(x)),
-        { keys: ["title"] }
-    );
+  const isRoot = props.url ? url === props.url : url === ""
+  const fuse = new Fuse(
+    props.listItems.filter((x) => !hasChildren(x)),
+    { keys: ["title"] }
+  )
 
-    useEffect(() => {
-        function getItems() {
-            if (isRoot) return props.listItems.filter((x) => x.parentSlug === url);
-            const slugs = url.split("/");
-            const lastSlug = slugs[slugs.length - 1];
-            const newItems = props.listItems.filter((x) => x.parentSlug === lastSlug);
-            return newItems;
-        }
-        setItems(getItems());
-    }, [isRoot, props.listItems, url]);
-
-    function handleClick(item: ListItem) {
-        if (hasChildren(item)) {
-            const newUrl = `${url}/${item.slug}`;
-            setUrl(newUrl);
-            props.withRouter && router.push(router.asPath + "/" + item.slug);
-        } else {
-            props.onChange && props.onChange(item);
-        }
+  useEffect(() => {
+    function getItems() {
+      if (isRoot) return props.listItems.filter((x) => x.parentSlug === url)
+      const slugs = url.split("/")
+      const lastSlug = slugs[slugs.length - 1]
+      const newItems = props.listItems.filter((x) => x.parentSlug === lastSlug)
+      return newItems
     }
+    setItems(getItems())
+  }, [isRoot, props.listItems, url])
 
-    function handleSearch(event: ChangeEvent<HTMLInputElement>) {
-        const value = event.target.value;
-        setSearchTerm(value);
-        let s = fuse.search(value);
-        setSearchedItems(s);
+  function handleClick(item: ListItem) {
+    if (hasChildren(item)) {
+      const newUrl = `${url}/${item.slug}`
+      setUrl(newUrl)
+      props.withRouter && router.push(router.asPath + "/" + item.slug)
+    } else {
+      props.onChange && props.onChange(item)
     }
+  }
 
-    function handleBackBtn() {
-        if (isRoot) return router.back();
-        setUrl((url) => url.substring(0, url.lastIndexOf("/")));
-        props.withRouter && router.back();
-    }
+  function handleSearch(event: ChangeEvent<HTMLInputElement>) {
+    const value = event.target.value
+    setSearchTerm(value)
+    let s = fuse.search(value)
+    setSearchedItems(s)
+  }
 
-    function hasChildren(item: ListItem) {
-        const children = props.listItems.filter((x) => x.parentSlug === item.slug);
-        return children.length > 0;
-    }
+  function handleBackBtn() {
+    if (isRoot) return router.back()
+    setUrl((url) => url.substring(0, url.lastIndexOf("/")))
+    props.withRouter && router.back()
+  }
 
-    function getHeading() {
-        if (isRoot) return props.heading;
-        const slugs = url.split("/");
-        const lastSlug = slugs[slugs.length - 1];
-        const item = props.listItems.find((x) => x.slug === lastSlug);
-        return item ? item.title : lastSlug.replace(/-/g, " ");
-    }
+  function hasChildren(item: ListItem) {
+    const children = props.listItems.filter((x) => x.parentSlug === item.slug)
+    return children.length > 0
+  }
 
-    const itemCard = (item: ListItem) => {
-        const { title, icon, slug } = item;
+  function getHeading() {
+    if (isRoot) return props.heading
+    const slugs = url.split("/")
+    const lastSlug = slugs[slugs.length - 1]
+    const item = props.listItems.find((x) => x.slug === lastSlug)
+    return item ? item.title : lastSlug.replace(/-/g, " ")
+  }
 
-        return (
-            <ListItemCard
-                key={slug}
-                title={title}
-                icon={icon}
-                withNavigationIcon={props.withNavigationIcon || hasChildren(item)}
-                onClick={() => handleClick(item)}
-            />
-        );
-    };
+  const itemCard = (item: ListItem) => {
+    const { title, icon, slug } = item
 
     return (
-        <FullScreenModal heading={getHeading()} onBackBtnClick={handleBackBtn}>
-            <ul className="overflow-y-auto h-full hide-scrollbar" ref={ref}>
-                {props.withSearch && <SearchField value={searchTerm} onChange={handleSearch} placeHolder="search" />}
-                {!searchTerm ? (
-                    <ViewportList viewportRef={ref} items={items}>
-                        {(item: ListItem) => itemCard(item)}
-                    </ViewportList>
-                ) : (
-                    <ViewportList viewportRef={ref} items={searchedItems}>
-                        {(item) => itemCard(item.item)}
-                    </ViewportList>
-                )}
-            </ul>
-        </FullScreenModal>
-    );
+      <ListItemCard
+        key={slug}
+        title={title}
+        icon={icon}
+        withNavigationIcon={props.withNavigationIcon || hasChildren(item)}
+        onClick={() => handleClick(item)}
+      />
+    )
+  }
+
+  return (
+    <FullScreenModal heading={getHeading()} onBackBtnClick={handleBackBtn}>
+      <ul className="overflow-y-auto h-full hide-scrollbar" ref={ref}>
+        {props.withSearch && <SearchField value={searchTerm} onChange={handleSearch} placeHolder="search" />}
+        {!searchTerm ? (
+          <ViewportList viewportRef={ref} items={items}>
+            {(item: ListItem) => itemCard(item)}
+          </ViewportList>
+        ) : (
+          <ViewportList viewportRef={ref} items={searchedItems}>
+            {(item) => itemCard(item.item)}
+          </ViewportList>
+        )}
+      </ul>
+    </FullScreenModal>
+  )
 }
