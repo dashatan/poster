@@ -8,17 +8,17 @@ import { useRouter } from "next/router"
 import TextField from "../../molecules/inputs/TextField"
 import Button from "../../atoms/buttons/Button"
 import { initialState } from "../../../app/slices/formData"
-import ImageField, { Info } from "../../molecules/inputs/ImageField"
+import ImageField, { dataURLtoFile, Info } from "../../molecules/inputs/ImageField"
 
 export interface KeyValueObj {
-    key: string;
-    value: string;
+  key: string
+  value: string
 }
 
 export interface CreatePostProps {
-    categories: Category[];
-    formData: KeyValueObj[];
-    onChange: (FormData: KeyValueObj[]) => void;
+  categories: Category[]
+  formData: KeyValueObj[]
+  onChange: (FormData: KeyValueObj[]) => void
 }
 
 export default function CreatePost(props: CreatePostProps) {
@@ -52,8 +52,11 @@ export default function CreatePost(props: CreatePostProps) {
     setFormData((formData) => setFdVal(formData, key, value))
   }
 
-  function handleImages(images: Info[]) {
-        
+  async function handleImages(images: Info[]) {
+    // Upload images to server and save them on disk and save the url into DB (redis or mongo)
+    if (images.length > 0) {
+      // console.log(URL.revokeObjectURL(images[0].path))
+    }
   }
 
   function newFd(attributes: Attribute[]) {
@@ -78,9 +81,19 @@ export default function CreatePost(props: CreatePostProps) {
     return obj ? obj.value : undefined
   }
 
+  function getImages() {
+    // get from db
+    const images = getVal("images")
+    if (images) {
+      console.log(images)
+
+      const f: Info[] = JSON.parse(images)
+      return f.map((x) => ({ ...x, file: dataURLtoFile(x.path, x.name) }))
+    }
+  }
+
   function onSubmit() {
-    console.log(formData)
-        
+    // console.log(formData)
   }
 
   return (
@@ -95,7 +108,14 @@ export default function CreatePost(props: CreatePostProps) {
       />
       {fields && <FormCreator fields={fields} formData={formData} onChange={handleChange} />}
       <div className="border-b w-full my-4" />
-      <ImageField label="images" onChange={handleImages}/>
+      <ImageField
+        maxFiles={20}
+        maxSize={5}
+        minDimension={[600, 600]}
+        label="images"
+        files={getImages()}
+        onChange={handleImages}
+      />
       <TextField
         key={"title" + getVal("category")}
         value={getVal("title")}

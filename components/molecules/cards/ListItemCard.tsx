@@ -3,10 +3,10 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline"
 import { beautifyWord } from "./FormFieldCard"
 
 export interface ListItemCardProps {
-    title: string;
-    withNavigationIcon?: boolean;
-    icon?: string;
-    onClick?: () => void;
+  title: string
+  withNavigationIcon?: boolean
+  icon?: string
+  onClick?: () => void
 }
 
 export default function ListItemCard(props: ListItemCardProps) {
@@ -25,10 +25,10 @@ export default function ListItemCard(props: ListItemCardProps) {
     "dark:border-dark-7",
     "text-dark-8",
     "dark:text-dark-4",
-  ]
+  ].join(" ")
 
   return (
-    <li className={classes.join(" ") + ""} onClick={onClick}>
+    <li className={classes + ""} onClick={onClick}>
       <div className="flex gap-4">
         {icon && (
           <svg className="w-6 h-6">

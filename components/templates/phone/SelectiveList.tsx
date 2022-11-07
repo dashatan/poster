@@ -8,22 +8,22 @@ import PhoneTopHeader from "../../organisms/headers/PhoneTopHeader"
 import FullScreenModal from "./FullScreenModal"
 
 export interface ListItem {
-    title: string;
-    slug: string;
-    parentSlug: string;
-    icon?: string;
+  title: string
+  slug: string
+  parentSlug: string
+  icon?: string
 }
 
 export interface SelectiveListProps {
-    heading: string;
-    listItems: ListItem[];
-    onChange?: (item: ListItem) => void;
-    onBackBtnClick?: () => void;
-    withNavigationIcon?: boolean;
-    asOptionTitle?: string;
-    withSearch?: boolean;
-    withRouter?: boolean;
-    url?: string;
+  heading: string
+  listItems: ListItem[]
+  onChange?: (item: ListItem) => void
+  onBackBtnClick?: () => void
+  withNavigationIcon?: boolean
+  asOptionTitle?: string
+  withSearch?: boolean
+  withRouter?: boolean
+  url?: string
 }
 
 export default function SelectiveList(props: SelectiveListProps) {
@@ -42,7 +42,6 @@ export default function SelectiveList(props: SelectiveListProps) {
 
   useEffect(() => {
     function getItems() {
-      if (isRoot) return props.listItems.filter((x) => x.parentSlug === url)
       const slugs = url.split("/")
       const lastSlug = slugs[slugs.length - 1]
       const newItems = props.listItems.filter((x) => x.parentSlug === lastSlug)
@@ -104,7 +103,9 @@ export default function SelectiveList(props: SelectiveListProps) {
   return (
     <FullScreenModal heading={getHeading()} onBackBtnClick={handleBackBtn}>
       <ul className="overflow-y-auto h-full hide-scrollbar" ref={ref}>
-        {props.withSearch && <SearchField value={searchTerm} onChange={handleSearch} placeHolder="search" />}
+        {props.withSearch && (
+          <SearchField value={searchTerm} onChange={handleSearch} placeHolder="search" />
+        )}
         {!searchTerm ? (
           <ViewportList viewportRef={ref} items={items}>
             {(item: ListItem) => itemCard(item)}

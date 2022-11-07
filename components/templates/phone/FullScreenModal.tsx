@@ -3,9 +3,9 @@ import { beautifyWord } from "../../molecules/cards/FormFieldCard"
 import PhoneTopHeader from "../../organisms/headers/PhoneTopHeader"
 
 export interface FullScreenModalProps {
-    heading: string;
-    children: ReactNode;
-    onBackBtnClick?: () => void;
+  heading: string
+  children: ReactNode
+  onBackBtnClick?: () => void
 }
 
 export default function FullScreenModal(props: FullScreenModalProps) {
@@ -19,8 +19,12 @@ export default function FullScreenModal(props: FullScreenModalProps) {
     "dark:text-dark-4",
   ]
   return (
-    <div className="h-screen">
-      <PhoneTopHeader text={beautifyWord(props.heading)} withBackBtn onBackBtnClick={props.onBackBtnClick} />
+    <div className="h-full w-full">
+      <PhoneTopHeader
+        text={beautifyWord(props.heading)}
+        withBackBtn
+        onBackBtnClick={props.onBackBtnClick}
+      />
       <div className={classes.join(" ") + ""}>{props.children}</div>
     </div>
   )

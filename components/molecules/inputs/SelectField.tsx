@@ -6,15 +6,15 @@ import SelectiveList, { ListItem } from "../../templates/phone/SelectiveList"
 import FormFieldCard, { beautifyWord } from "../cards/FormFieldCard"
 
 export interface SelectFieldProps {
-    label: string;
-    value?: string;
-    asOptionTitle?: string;
-    onClick?: () => void;
-    onChange?: (item: ListItem) => void;
-    options: ListItem[];
-    withSearch?: boolean;
-    url?: string;
-    variant?: string;
+  label: string
+  value?: string
+  asOptionTitle?: string
+  onClick?: () => void
+  onChange?: (item: ListItem) => void
+  options: ListItem[]
+  withSearch?: boolean
+  url?: string
+  variant?: string
 }
 
 export default function SelectField(props: SelectFieldProps) {
@@ -33,7 +33,7 @@ export default function SelectField(props: SelectFieldProps) {
 
   const selectiveList = (
     <Portal>
-      <div className={"fixed top-0 left-0 h-screen w-full"}>
+      <div className="fixed top-0 left-0 h-screen w-screen">
         <SelectiveList
           heading={props.label}
           withSearch={props.withSearch}
@@ -50,16 +50,18 @@ export default function SelectField(props: SelectFieldProps) {
 
   const modal = () => {
     switch (props.variant) {
-    case "minimal":
-      return minimalList
+      case "minimal":
+        return minimalList
 
-    default:
-      return selectiveList
+      default:
+        return selectiveList
     }
   }
 
   const showModal =
-        queryString && typeof queryString === "string" && queryString.toLowerCase() === slug.toLowerCase()
+    queryString &&
+    typeof queryString === "string" &&
+    queryString.toLowerCase() === slug.toLowerCase()
 
   const displayVal = props.value ? props.value.replace(/-/g, " ") : ""
 

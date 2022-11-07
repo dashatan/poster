@@ -15,28 +15,30 @@ export default function Create() {
 
   function handleChange(formData: KeyValueObj[]) {
     dispatch(post(formData))
-    window.localStorage.setItem("PostFormData",JSON.stringify(formData))
+    window.localStorage.setItem("PostFormData", JSON.stringify(formData))
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     const fd = window.localStorage.getItem("PostFormData")
-    if(fd) dispatch(post(JSON.parse(fd)))
-  },[])
+    if (fd) dispatch(post(JSON.parse(fd)))
+  }, [])
 
   return (
-    <FullScreenModal heading="Add New Post">
-      {isLoading && (
-        <div className="flex flex-col justify-center items-center h-10 mt-4">
-          <Spinner />
-        </div>
-      )}
-      {error && (
-        <div className="flex flex-col justify-center items-center mt-4">
-          <XCircleIcon className="w-16" />
-          <div className="text-xl">Some thing went wrong</div>
-        </div>
-      )}
-      {data && <CreatePost categories={data} formData={formData} onChange={handleChange} />}
-    </FullScreenModal>
+    <div className="h-screen w-screen">
+      <FullScreenModal heading="Add New Post">
+        {isLoading && (
+          <div className="flex flex-col justify-center items-center h-10 mt-4">
+            <Spinner />
+          </div>
+        )}
+        {error && (
+          <div className="flex flex-col justify-center items-center mt-4">
+            <XCircleIcon className="w-16" />
+            <div className="text-xl">Some thing went wrong</div>
+          </div>
+        )}
+        {data && <CreatePost categories={data} formData={formData} onChange={handleChange} />}
+      </FullScreenModal>
+    </div>
   )
 }

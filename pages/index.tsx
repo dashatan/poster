@@ -6,23 +6,23 @@ import Home from "../components/templates/phone/Home"
 import { useRouter } from "next/router"
 import { useAppSelector } from "../app/hooks"
 import { RootState } from "../app/store"
+import { useCategoriesQuery } from "../app/slices/api"
 
 const HomePage: NextPage = () => {
   const router = useRouter()
   const search = useAppSelector((state: RootState) => state.search)
+  const { data } = useCategoriesQuery()
 
   return (
     <PhoneLayout>
       <Home
-        icons={categories}
+        categories={data?.filter((x) => x.parentSlug === "categories")}
         posts={posts}
         placeHolders={{
           selectPlaceHolder: "tabriz",
           searchPlaceHolder: "",
         }}
-        onIconCardClick={(item) =>
-          router.push(`/categories/${item.title}`)
-        }
+        onIconCardClick={(item) => router.push(`/categories/${item.title}`)}
       />
     </PhoneLayout>
   )

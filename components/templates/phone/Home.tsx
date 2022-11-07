@@ -4,51 +4,77 @@ import PostCard, { PostCardProps } from "../../molecules/cards/PostCard"
 import SearchBoxWithSelect from "../../molecules/search_boxes/SearchBoxWithSelect"
 import ViewportList from "react-viewport-list"
 import { useRouter } from "next/router"
-import { DocumentMagnifyingGlassIcon } from "@heroicons/react/24/outline"
 import { ListItem } from "./SelectiveList"
+import Category from "../../../app/types/Category"
 
 export interface HomeProps {
-    icons: ListItem[];
-    posts: PostCardProps[];
-    placeHolders: {
-        selectPlaceHolder: string;
-        searchPlaceHolder: string;
-    };
-    onIconCardClick: (item: ListItem) => void;
+  categories?: Category[]
+  posts: PostCardProps[]
+  placeHolders: {
+    selectPlaceHolder: string
+    searchPlaceHolder: string
+  }
+  onIconCardClick: (item: ListItem) => void
 }
 
 const Home = (props: HomeProps) => {
   const router = useRouter()
-  const { placeHolders, icons, posts, onIconCardClick } = props
+  const { placeHolders, categories, posts, onIconCardClick } = props
   const ref = useRef(null)
+
+  const classes = {
+    container: [
+      "p-2",
+      "h-36",
+      "flex",
+      "flex-col",
+      "justify-between",
+      "bg-light-4",
+      "dark:bg-dark-8",
+    ],
+    header: [
+      "flex",
+      "w-full",
+      "gap-5",
+      "mt-4",
+      "overflow-x-auto",
+      "overflow-y-hidden",
+      "hide-scrollbar",
+    ],
+    body: [
+      "px-3",
+      "flex",
+      "flex-col",
+      "gap-3",
+      "overflow-y-auto",
+      "h-[calc(100vh_-_theme(space.36)_-_theme(space.14))]",
+    ],
+  }
 
   return (
     <>
-      <div className="p-2 h-36 flex flex-col justify-between bg-light-4 dark:bg-dark-8">
+      <div className={classes.container.join(" ")}>
         <SearchBoxWithSelect
           selectPlaceHolder={placeHolders.selectPlaceHolder}
           searchPlaceHolder={placeHolders.searchPlaceHolder}
           onSearchBarClick={() => router.push("/search")}
           onSelectClick={() => router.push("/region")}
         />
-        <div className="flex w-full gap-5 mt-4 overflow-x-auto overflow-y-hidden hide-scrollbar">
-          {icons.map((item, index) => {
-            const { title, Icon } = item
+        <div className={classes.header.join(" ")}>
+          {categories?.map((cat, index) => {
+            const { title, icon } = cat
             return (
               <IconCard
                 key={index}
                 title={title}
-                Icon={Icon || DocumentMagnifyingGlassIcon}
-                onClick={() => onIconCardClick(item)}
+                icon={icon}
+                onClick={() => onIconCardClick(cat)}
               />
             )
           })}
         </div>
       </div>
-      <div
-        className="px-3 flex flex-col gap-3 overflow-y-auto h-[calc(100vh_-_theme(space.36)_-_theme(space.14))]"
-        ref={ref}
-      >
+      <div className={classes.body.join(" ")} ref={ref}>
         <ViewportList viewportRef={ref} items={posts}>
           {(item, index) => {
             return (
