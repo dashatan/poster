@@ -1,9 +1,9 @@
 import "../styles/globals.css"
 import type { AppProps } from "next/app"
 import { Provider } from "react-redux"
-import { store } from "../app/store"
+import { store } from "../utils/store"
 import { useEffect } from "react"
-import setDarkMode from "../app/customHooks/useDarkMode"
+import setDarkMode from "../utils/customHooks/useDarkMode"
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {

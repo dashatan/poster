@@ -67,8 +67,14 @@ export default function SelectField(props: SelectFieldProps) {
 
   return (
     <>
-      <FormFieldCard clicked={!!props.value} label={props.label} onClick={modalRouter}>
-        <div className="text-base text-dark-8 dark:text-dark-3">{beautifyWord(displayVal)}</div>
+      <FormFieldCard
+        clicked={!!props.value}
+        label={props.label}
+        onClick={modalRouter}
+      >
+        <div className="text-base text-dark-8 dark:text-dark-3">
+          {beautifyWord(displayVal)}
+        </div>
         <ChevronRightIcon className="w-6 text-dark-6 dark:text-dark-4 rtl:rotate-180" />
       </FormFieldCard>
       {showModal && modal()}

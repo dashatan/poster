@@ -1,4 +1,4 @@
-import provinces from "../../app/static/iran/provinces.json"
+import provinces from "../../utils/static/iran/provinces.json"
 import { useRouter } from "next/router"
 import SelectiveList, {
   ListItem,

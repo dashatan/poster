@@ -1,77 +1,86 @@
-import Attribute, { Prop } from "../../../app/types/Attribute"
+import { useMemo } from "react"
+import Attribute, { Prop } from "../../../utils/types/Attribute"
 import CheckBoxField from "../../molecules/inputs/CheckBoxField"
 import NumberField from "../../molecules/inputs/NumberField"
 import TextField from "../../molecules/inputs/TextField"
 import Select from "./Select"
 
 export interface FormCreatorProps {
-    fields: Attribute[];
-    formData: { key: string; value: string }[];
-    onChange?: (key: string, value: string) => void;
-    onSubmit?: () => void;
+  fields: Attribute[]
+  formData: { key: string; value: string }[]
+  onChange?: (key: string, value: string) => void
 }
 
-export function getPropVal(props: Prop[] | undefined, name: string) {
-  if (props) {
-    const prop = props.find((x) => x.name === name)
-    if (prop) {
-      return prop.value
-    }
-    return ""
-  }
-  return ""
+// This function is not related to Component Props , These are properties of form fields we received from api
+export function getPropVal(props: Prop[] | undefined, name: string): string {
+  const prop = props?.find((x) => x.name === name)
+  return prop ? prop.value : ""
 }
-
-export default function FormCreator(props: FormCreatorProps) {
-  const { formData } = props
+// TODO: memoize fields to avoid re-rendering on input changes
+export default function FormCreator(props: FormCreatorProps): JSX.Element {
+  const { formData, fields, onChange } = props
 
   function getFieldValue(key: string) {
     const obj = formData.find((x) => x.key === key)
-    return obj ? obj.value : ""
+    return obj ? obj.value : undefined
   }
   function handleChange(key: string, value: string) {
-    props.onChange && props.onChange(key, value)
+    onChange && onChange(key, value)
   }
 
-  return (
-    <>
-      {props.fields.map((field) => {
-        const { label } = field
-        switch (field.formFieldType) {
-        case "select":
-          return (
-            <Select
-              key={label + getFieldValue(label)}
-              field={field}
-              value={getFieldValue(label)}
-              onChange={handleChange}
-            />
-          )
-        case "text":
-          return (
-            <TextField key={label} label={label} value={getFieldValue(label)} onChange={handleChange} />
-          )
-        case "number":
-          return (
-            <NumberField
-              key={label}
-              label={label}
-              value={getFieldValue(label)}
-              props={field.props}
-              onChange={handleChange}
-            />
-          )
-        case "checkbox":
-          return (
-            <CheckBoxField
-              key={label}
-              label={label}
-              value={getFieldValue(label)}
-              onChange={handleChange}
-            />
-          )
-        }
-      })}
-    </>
+  const selectField = (field: Attribute) => (
+    <Select
+      key={field.label + getFieldValue(field.label)}
+      field={field}
+      value={getFieldValue(field.label)}
+      onChange={handleChange}
+    />
   )
+
+  const textField = ({ label }: Attribute) => (
+    <TextField
+      key={label}
+      label={label}
+      value={getFieldValue(label) || ""}
+      onChange={handleChange}
+    />
+  )
+
+  const numberField = ({ label, props }: Attribute) => (
+    <NumberField
+      key={label}
+      label={label}
+      value={getFieldValue(label) || ""}
+      props={props}
+      onChange={handleChange}
+    />
+  )
+
+  const checkBoxField = ({ label }: Attribute) => (
+    <CheckBoxField
+      key={label}
+      label={label}
+      value={getFieldValue(label) || "0"}
+      onChange={handleChange}
+    />
+  )
+
+  interface FieldType {
+    [key: string]: (attr: Attribute) => JSX.Element
+  }
+
+  const fieldTypes: FieldType = {
+    select: selectField,
+    text: textField,
+    number: numberField,
+    checkbox: checkBoxField,
+  }
+
+  const Field = (attr: Attribute) => {
+    const field = fieldTypes[attr.formFieldType]
+    if (!field) return
+    return field(attr)
+  }
+
+  return <>{fields.map((attr) => Field(attr))}</>
 }

@@ -1,12 +1,12 @@
-import Attribute from "../../../app/types/Attribute"
+import Attribute from "../../../utils/types/Attribute"
 import SelectField from "../../molecules/inputs/SelectField"
 import { ListItem } from "../../templates/phone/SelectiveList"
 import { getPropVal } from "./FormCreator"
 
 export interface SelectProps {
-    field: Attribute;
-    onChange?: (key: string, value: string) => void;
-    value?: string;
+  field: Attribute
+  onChange?: (key: string, value: string) => void
+  value?: string
 }
 
 export default function Select({ field, onChange, value }: SelectProps) {

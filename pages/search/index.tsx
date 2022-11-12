@@ -1,13 +1,13 @@
 import { ArrowLeftIcon } from "@heroicons/react/24/outline"
 import { useRouter } from "next/router"
 import { ChangeEvent } from "react"
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { text } from "../../app/slices/search"
-import { RootState } from "../../app/store"
+import { useAppDispatch, useAppSelector } from "../../utils/hooks"
+import { text } from "../../utils/slices/search"
+import { RootState } from "../../utils/store"
 
 const Search = () => {
   const router = useRouter()
-  const search = useAppSelector((state: RootState)=> state.search)
+  const search = useAppSelector((state: RootState) => state.search)
   const dispatch = useAppDispatch()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

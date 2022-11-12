@@ -11,7 +11,9 @@
         "code": 100,
         "tabWidth": 2,
         "ignoreUrls": true,
-        "ignoreStrings": true
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreComments": true
       }
     ],
     "quotes": ["error", "double"],

@@ -1,4 +1,4 @@
-import useNavItems from "../../app/customHooks/useNavItems"
+import useNavItems from "../../utils/customHooks/useNavItems"
 import BottomNav from "../organisms/footers/BottomNav"
 
 const PhoneLayout = ({ children }: { children: JSX.Element }) => {

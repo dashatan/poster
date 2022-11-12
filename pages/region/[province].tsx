@@ -1,12 +1,12 @@
-import provinces from "../../app/static/iran/provinces.json"
-import cities from "../../app/static/iran/cities.json"
+import provinces from "../../utils/static/iran/provinces.json"
+import cities from "../../utils/static/iran/cities.json"
 import { useRouter } from "next/router"
 import Error from "next/error"
 import BottomNav from "../../components/organisms/footers/BottomNav"
 import SelectiveList, {
   ListItem,
 } from "../../components/templates/phone/SelectiveList"
-import useNavItems from "../../app/customHooks/useNavItems"
+import useNavItems from "../../utils/customHooks/useNavItems"
 
 export default function Province() {
   const router = useRouter()

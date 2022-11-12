@@ -1,41 +1,32 @@
 export interface ButtonProps {
-    label: string;
-    color?: "blue" | "red" | "green";
-    onClick?: () => void;
+  label: string
+  color: "blue" | "red" | "green"
+  onClick?: () => void
 }
-const Button = (props: ButtonProps) => {
-  let color 
-  switch (props.color) {
-  case "blue":
-    color = "bg-blue-4"
-    break
-  case "green":
-    color = "bg-green-4"
-    break
-        
-  default:
-    color = "bg-red-4"
-    break
+export default function Button({ label, color, onClick }: ButtonProps) {
+  const bgColors = {
+    blue: "bg-blue-4",
+    green: "bg-green-4",
+    red: "bg-red-4",
   }
+  const bgColor = bgColors[color]
   const classes = [
     "w-full",
     "h-10",
     "p-2",
     "border-2",
-    color,
+    bgColor,
     "text-dark-8",
     "border-dark-6",
     "rounded-lg",
     "flex",
     "justify-around",
     "items-center",
-  ]
+  ].join(" ")
 
   return (
-    <div className={classes.join(" ") + ""} onClick={props.onClick}>
-      {props.label}
+    <div className={classes + ""} onClick={onClick}>
+      {label}
     </div>
   )
 }
-
-export default Button

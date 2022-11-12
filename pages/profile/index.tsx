@@ -1,4 +1,4 @@
-import setDarkMode from "../../app/customHooks/useDarkMode"
+import setDarkMode from "../../utils/customHooks/useDarkMode"
 import Button from "../../components/atoms/buttons/Button"
 
 const Profile = () => {
@@ -10,7 +10,7 @@ const Profile = () => {
     <div>
       <h1>Profile</h1>
       <Button className="w-40" onClick={handleDarkMode}>
-                dark mode
+        dark mode
       </Button>
     </div>
   )

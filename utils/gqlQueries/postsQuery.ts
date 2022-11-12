@@ -1,5 +1,5 @@
 export default function postsQuery() {
-    return `?query=query {
+  return `/gql?query=query {
                 posts{
                     thumbnail
                     title
@@ -7,5 +7,5 @@ export default function postsQuery() {
                     middleDescription
                     bottomDescription
                 }
-            }`;
+            }`
 }

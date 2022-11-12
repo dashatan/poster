@@ -1,10 +1,10 @@
 import { ReactNode } from "react"
 
 export interface FormFieldCardProps {
-    clicked?: boolean;
-    children?: ReactNode;
-    label: string;
-    onClick?: () => void;
+  clicked?: boolean
+  children?: ReactNode
+  label: string
+  onClick?: () => void
 }
 
 export const beautifyWord = (string: string) => {
@@ -16,7 +16,14 @@ export const beautifyWord = (string: string) => {
 }
 
 export default function FormFieldCard(props: FormFieldCardProps) {
-  const containerClasses = ["h-16", "relative", "flex", "items-center", "group", props.clicked && "clicked"]
+  const containerClasses = [
+    "h-16",
+    "relative",
+    "flex",
+    "items-center",
+    "group",
+    props.clicked && "clicked",
+  ].join(" ")
   const labelClasses = [
     "h-6",
     "px-2",
@@ -37,7 +44,7 @@ export default function FormFieldCard(props: FormFieldCardProps) {
     "dark:bg-dark-6",
     "text-dark-6",
     "dark:text-dark-4",
-  ]
+  ].join(" ")
   const boxClasses = [
     "h-10",
     "px-4",
@@ -52,12 +59,12 @@ export default function FormFieldCard(props: FormFieldCardProps) {
     "dark:border-dark-4",
     "group",
     props.clicked && "clicked",
-  ]
-    
+  ].join(" ")
+
   return (
-    <div className={containerClasses.join(" ") + ""} onClick={props.onClick}>
-      <div className={labelClasses.join(" ") + ""}>{beautifyWord(props.label) || "Form Field"}</div>
-      <div className={boxClasses.join(" ") + ""}>{props.children}</div>
+    <div className={containerClasses} onClick={props.onClick}>
+      <div className={labelClasses}>{beautifyWord(props.label)}</div>
+      <div className={boxClasses}>{props.children}</div>
     </div>
   )
 }

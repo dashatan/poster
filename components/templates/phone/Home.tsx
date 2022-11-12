@@ -5,7 +5,7 @@ import SearchBoxWithSelect from "../../molecules/search_boxes/SearchBoxWithSelec
 import ViewportList from "react-viewport-list"
 import { useRouter } from "next/router"
 import { ListItem } from "./SelectiveList"
-import Category from "../../../app/types/Category"
+import Category from "../../../utils/types/Category"
 
 export interface HomeProps {
   categories?: Category[]

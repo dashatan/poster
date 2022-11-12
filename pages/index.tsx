@@ -1,12 +1,12 @@
 import type { NextPage } from "next"
-import { categories } from "../app/static/categories"
-import { posts } from "../app/static/posts"
+import { categories } from "../utils/static/categories"
+import { posts } from "../utils/static/posts"
 import PhoneLayout from "../components/layouts/PhoneLayout"
 import Home from "../components/templates/phone/Home"
 import { useRouter } from "next/router"
-import { useAppSelector } from "../app/hooks"
-import { RootState } from "../app/store"
-import { useCategoriesQuery } from "../app/slices/api"
+import { useAppSelector } from "../utils/hooks"
+import { RootState } from "../utils/store"
+import { useCategoriesQuery } from "../utils/slices/api"
 
 const HomePage: NextPage = () => {
   const router = useRouter()

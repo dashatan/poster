@@ -1,5 +1,5 @@
 export default function categoriesQuery() {
-    return `?query=query {
+  return `/gql?query=query {
             categories{
               title
               slug
@@ -17,5 +17,5 @@ export default function categoriesQuery() {
               }
             }
           }
-        `;
+        `
 }

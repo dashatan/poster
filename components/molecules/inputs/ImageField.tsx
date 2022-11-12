@@ -10,15 +10,18 @@ export interface ImageFieldProps {
   maxFiles: number
   maxSize: number // in MB
   minDimension: [number, number]
-  files?: Info[]
-  onChange?: (images: Info[]) => void
+  files?: ImageObject[]
+  onChange?: (images: ImageObject[]) => void
 }
 
-export interface Info {
+export interface ImageObject {
   name: string
   file: File
   path: string
   validation: Validation
+  uploaded?: boolean
+  uploading?: boolean
+  progress?: boolean
 }
 
 export interface Validation {
@@ -42,7 +45,7 @@ export function dataURLtoFile(dataUrl: string, filename: string) {
 }
 
 export default function ImageField(props: ImageFieldProps) {
-  const [files, setFiles] = useState<Info[]>(props.files || [])
+  const [files, setFiles] = useState<ImageObject[]>(props.files || [])
   const [loading, setLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const validFiles = files.filter((x) => x.validation.isValid)
@@ -55,7 +58,6 @@ export default function ImageField(props: ImageFieldProps) {
     dimension: `Image dimension could be larger than ${props.minDimension[0]}x${props.minDimension[1]}`,
     count: `Images count could not be more than ${props.maxFiles}`,
   }
-  console.log(files)
 
   async function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setLoading(true)
@@ -63,8 +65,11 @@ export default function ImageField(props: ImageFieldProps) {
     if (!filesObj) return
     const filesArr: File[] = Object.values(filesObj)
     let allowedLength = props.maxFiles - validFiles.length
-    filesArr.length = filesArr.length < allowedLength ? filesArr.length : allowedLength
-    const filePromise = filesArr.map((file) => validate(file).then((res) => res))
+    filesArr.length =
+      filesArr.length < allowedLength ? filesArr.length : allowedLength
+    const filePromise = filesArr.map((file) =>
+      validate(file).then((res) => res)
+    )
     const res = await Promise.all(filePromise)
     const newFiles = [...validFiles, ...res]
     setFiles(newFiles)
@@ -79,15 +84,27 @@ export default function ImageField(props: ImageFieldProps) {
   }
 
   function validate(file: File) {
-    return new Promise<Info>(async (resolve) => {
+    return new Promise<ImageObject>(async (resolve) => {
       const name = `${Math.random()}_${file.name}`
       let validation: Validation = { isValid: true, errorCode: "valid" }
       sizeError(file)
-        .then((res) => resolve({ file, name, path: URL.createObjectURL(file), validation: res }))
+        .then((res) =>
+          resolve({
+            file,
+            name,
+            path: URL.createObjectURL(file),
+            validation: res,
+          })
+        )
         .catch(() => {
           const reader = new FileReader()
           reader.onload = async (e) => {
-            if (!e.target || !e.target.result || typeof e.target.result !== "string") return
+            if (
+              !e.target ||
+              !e.target.result ||
+              typeof e.target.result !== "string"
+            )
+              return
             const path = e.target.result
             const result = { name, file, path }
             await dimensionError(path)
@@ -116,7 +133,10 @@ export default function ImageField(props: ImageFieldProps) {
       const image = new Image()
       image.src = src
       image.onload = async function () {
-        if (image.width < props.minDimension[0] && image.height < props.minDimension[1]) {
+        if (
+          image.width < props.minDimension[0] &&
+          image.height < props.minDimension[1]
+        ) {
           resolve({ isValid: false, errorCode: "dimension" })
         } else {
           reject()
@@ -125,7 +145,7 @@ export default function ImageField(props: ImageFieldProps) {
     })
   }
 
-  function removeFile(file: Info) {
+  function removeFile(file: ImageObject) {
     const newFiles = files.filter((x) => x.name !== file.name)
     setFiles(newFiles)
     props.onChange && props.onChange(newFiles)
@@ -176,10 +196,30 @@ export default function ImageField(props: ImageFieldProps) {
           </div>
         )}
         {validFiles.map((file) => (
-          <div key={file.name} className={classes.imageContainer.join(" ") + " relative"}>
-            <div className={classes.removeBtn.join(" ")} onClick={() => removeFile(file)}>
-              <TrashIcon className="w-4 text-red-6" />
-            </div>
+          <div
+            key={file.name}
+            className={classes.imageContainer.join(" ") + " relative"}
+          >
+            {file.uploaded && (
+              <div
+                className={classes.removeBtn.join(" ")}
+                onClick={() => removeFile(file)}
+              >
+                <TrashIcon className="w-4 text-red-6" />
+              </div>
+            )}
+            {file.uploading && (
+              <div
+                style={{ backgroundImage: `url(${file.path})` }}
+                className="w-full h-full bg-cover bg-center rounded-lg flex justify-center items-center"
+              >
+                <div className="w-3/4 h-1 rounded-lg border border-green-6">
+                  <div
+                    className={`w-[${file.progress}%] h-full bg-green-6`}
+                  ></div>
+                </div>
+              </div>
+            )}
             <div
               style={{ backgroundImage: `url(${file.path})` }}
               className="w-full h-full bg-cover bg-center rounded-lg"
@@ -187,8 +227,14 @@ export default function ImageField(props: ImageFieldProps) {
           </div>
         ))}
         {invalidFiles.map((file) => (
-          <div key={file.name} className={classes.imageContainer.join(" ") + " relative"}>
-            <div className={classes.removeBtn.join(" ")} onClick={() => removeFile(file)}>
+          <div
+            key={file.name}
+            className={classes.imageContainer.join(" ") + " relative"}
+          >
+            <div
+              className={classes.removeBtn.join(" ")}
+              onClick={() => removeFile(file)}
+            >
               <TrashIcon className="w-4 text-red-6" />
             </div>
             <div
