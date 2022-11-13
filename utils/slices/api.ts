@@ -1,4 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { PostObject } from "../../pages/posts/create"
+import createPost from "../gqlMutations/createPost"
 import categoriesQuery from "../gqlQueries/categoriesQuery"
 import postsQuery from "../gqlQueries/postsQuery"
 import Category from "../types/Category"
@@ -22,15 +24,10 @@ export const API = createApi({
         return response.data.categories
       },
     }),
-    uploadImages: builder.mutation<{}, FormData>({
-      query: (body) => ({
-        url: "/upload/images",
-        method: "POST",
-        body,
-      }),
+    createPost: builder.mutation<{}, PostObject>({
+      query: createPost,
     }),
   }),
 })
 
-export const { usePostsQuery, useCategoriesQuery, useUploadImagesMutation } =
-  API
+export const { usePostsQuery, useCategoriesQuery, useCreatePostMutation } = API

@@ -8,10 +8,7 @@ import { useRouter } from "next/router"
 import TextField from "../../molecules/inputs/TextField"
 import Button from "../../atoms/buttons/Button"
 import { initialState } from "../../../utils/slices/formData"
-import ImageField, {
-  dataURLtoFile,
-  ImageObject,
-} from "../../molecules/inputs/ImageField"
+import ImageField, { dataURLtoFile, ImageObject } from "../../molecules/inputs/ImageField"
 
 export interface KeyValueObj {
   key: string
@@ -20,13 +17,14 @@ export interface KeyValueObj {
 
 export interface CreatePostProps {
   categories: Category[]
+  images: ImageObject[]
   formData: KeyValueObj[]
   onChange: (FormData: KeyValueObj[]) => void
   onImageChange: (images: ImageObject[]) => void
 }
 
 export default function CreatePost(props: CreatePostProps) {
-  const { onChange, formData, categories, onImageChange } = props
+  const { onChange, formData, categories, onImageChange, images } = props
   const [fields, setFields] = useState<Attribute[]>([])
 
   const router = useRouter()
@@ -51,10 +49,6 @@ export default function CreatePost(props: CreatePostProps) {
     onChange(setFdVal(formData, key, value))
   }
 
-  async function handleImages(images: ImageObject[]) {
-    onImageChange(images)
-  }
-
   function newFd(attributes: Attribute[]) {
     const fd = [...initialState.post]
     attributes.map((attr) => {
@@ -75,15 +69,6 @@ export default function CreatePost(props: CreatePostProps) {
   function getVal(key: string) {
     const obj = formData.find((x) => x.key === key)
     return obj ? obj.value : ""
-  }
-
-  function getImages() {
-    // get from db
-    const images = getVal("images")
-    if (images) {
-      const f: ImageObject[] = JSON.parse(images)
-      return f.map((x) => ({ ...x, file: dataURLtoFile(x.path, x.name) }))
-    }
   }
 
   function onSubmit() {}
@@ -110,11 +95,7 @@ export default function CreatePost(props: CreatePostProps) {
         url="categories"
       />
       {fields && (
-        <FormCreator
-          fields={fields}
-          formData={formData}
-          onChange={handleChange}
-        />
+        <FormCreator fields={fields} formData={formData} onChange={handleChange} />
       )}
       <div className="border-b w-full my-4" />
       <ImageField
@@ -122,8 +103,8 @@ export default function CreatePost(props: CreatePostProps) {
         maxSize={5}
         minDimension={[600, 600]}
         label="images"
-        files={getImages()}
-        onChange={handleImages}
+        files={images}
+        onChange={onImageChange}
       />
       {titleField}
       <TextField

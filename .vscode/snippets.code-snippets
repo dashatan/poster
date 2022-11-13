@@ -3,5 +3,10 @@
     "prefix": "log",
     "body": ["console.log($1)"],
     "description": "Log output to console"
+  },
+  "prettier ignore": {
+    "prefix": "pig",
+    "body": ["/* prettier-ignore */"],
+    "description": "prettier ignore"
   }
 }

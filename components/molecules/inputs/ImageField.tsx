@@ -5,13 +5,11 @@ import Info from "../alerts/Info"
 
 export interface ImageFieldProps {
   label: string
-  value?: string
-  type?: string
   maxFiles: number
   maxSize: number // in MB
   minDimension: [number, number]
-  files?: ImageObject[]
-  onChange?: (images: ImageObject[]) => void
+  files: ImageObject[]
+  onChange: (images: ImageObject[]) => void
 }
 
 export interface ImageObject {
@@ -45,7 +43,9 @@ export function dataURLtoFile(dataUrl: string, filename: string) {
 }
 
 export default function ImageField(props: ImageFieldProps) {
-  const [files, setFiles] = useState<ImageObject[]>(props.files || [])
+  const { label, maxFiles, maxSize, minDimension, onChange } = props
+
+  const [files, setFiles] = useState<ImageObject[]>(props.files)
   const [loading, setLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const validFiles = files.filter((x) => x.validation.isValid)
@@ -54,9 +54,9 @@ export default function ImageField(props: ImageFieldProps) {
   const errors = {
     valid: "Image is acceptable",
     default: "Image is not acceptable",
-    size: `image size could not be more than ${props.maxSize}MB`,
-    dimension: `Image dimension could be larger than ${props.minDimension[0]}x${props.minDimension[1]}`,
-    count: `Images count could not be more than ${props.maxFiles}`,
+    size: `image size could not be more than ${maxSize}MB`,
+    dimension: `Image dimension could be larger than ${minDimension[0]}x${minDimension[1]}`,
+    count: `Images count could not be more than ${maxFiles}`,
   }
 
   async function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -64,19 +64,16 @@ export default function ImageField(props: ImageFieldProps) {
     const filesObj = e.target.files
     if (!filesObj) return
     const filesArr: File[] = Object.values(filesObj)
-    let allowedLength = props.maxFiles - validFiles.length
-    filesArr.length =
-      filesArr.length < allowedLength ? filesArr.length : allowedLength
-    const filePromise = filesArr.map((file) =>
-      validate(file).then((res) => res)
-    )
+    let allowedLength = maxFiles - validFiles.length
+    filesArr.length = filesArr.length < allowedLength ? filesArr.length : allowedLength
+    const filePromise = filesArr.map((file) => validate(file).then((res) => res))
     const res = await Promise.all(filePromise)
     const newFiles = [...validFiles, ...res]
     setFiles(newFiles)
     setLoading(false)
     e.target.value = "" //empty file input
     const newValidFiles = newFiles.filter((x) => x.validation.isValid)
-    props.onChange && newValidFiles && props.onChange(newValidFiles)
+    onChange && newValidFiles && onChange(newValidFiles)
   }
 
   function handleClick() {
@@ -84,35 +81,17 @@ export default function ImageField(props: ImageFieldProps) {
   }
 
   function validate(file: File) {
-    return new Promise<ImageObject>(async (resolve) => {
+    return new Promise<ImageObject>((resolve) => {
+      const path = URL.createObjectURL(file)
       const name = `${Math.random()}_${file.name}`
-      let validation: Validation = { isValid: true, errorCode: "valid" }
+      const validation: Validation = { isValid: true, errorCode: "valid" }
+      const imgObj: ImageObject = { file, name, path, validation }
       sizeError(file)
-        .then((res) =>
-          resolve({
-            file,
-            name,
-            path: URL.createObjectURL(file),
-            validation: res,
-          })
-        )
+        .then((res) => resolve({ ...imgObj, validation: res }))
         .catch(() => {
-          const reader = new FileReader()
-          reader.onload = async (e) => {
-            if (
-              !e.target ||
-              !e.target.result ||
-              typeof e.target.result !== "string"
-            )
-              return
-            const path = e.target.result
-            const result = { name, file, path }
-            await dimensionError(path)
-              .then((res) => (validation = res))
-              .catch(() => {})
-            resolve({ ...result, validation })
-          }
-          reader.readAsDataURL(file)
+          dimensionError(path)
+            .then((res) => resolve({ ...imgObj, validation: res }))
+            .catch(() => resolve(imgObj))
         })
     })
   }
@@ -120,7 +99,7 @@ export default function ImageField(props: ImageFieldProps) {
   function sizeError(file: File) {
     return new Promise<Validation>((resolve, reject) => {
       const size = Math.round(file.size / 1024)
-      if (size > 1024 * props.maxSize) {
+      if (size > 1024 * maxSize) {
         resolve({ isValid: false, errorCode: "size" })
       } else {
         reject()
@@ -133,10 +112,7 @@ export default function ImageField(props: ImageFieldProps) {
       const image = new Image()
       image.src = src
       image.onload = async function () {
-        if (
-          image.width < props.minDimension[0] &&
-          image.height < props.minDimension[1]
-        ) {
+        if (image.width < minDimension[0] && image.height < minDimension[1]) {
           resolve({ isValid: false, errorCode: "dimension" })
         } else {
           reject()
@@ -148,7 +124,7 @@ export default function ImageField(props: ImageFieldProps) {
   function removeFile(file: ImageObject) {
     const newFiles = files.filter((x) => x.name !== file.name)
     setFiles(newFiles)
-    props.onChange && props.onChange(newFiles)
+    onChange && onChange(newFiles)
   }
 
   const classes = {
@@ -162,7 +138,7 @@ export default function ImageField(props: ImageFieldProps) {
       "border-2",
       "border-dashed",
       "rounded-lg",
-    ],
+    ].join(" "),
     removeBtn: [
       "w-6",
       "h-6",
@@ -174,16 +150,16 @@ export default function ImageField(props: ImageFieldProps) {
       "justify-center",
       "items-center",
       "rounded-full",
-    ],
+    ].join(" "),
   }
 
   return (
     <>
-      <div className="px-2 pb-4">{props.label}</div>
+      <div className="px-2 pb-4">{label}</div>
       <div className="flex flex-wrap gap-4 border rounded-lg p-2">
-        {validFiles.length < props.maxFiles && (
+        {validFiles.length < maxFiles && (
           <div
-            className={classes.imageContainer.join(" ")}
+            className={classes.imageContainer}
             onClick={!loading ? handleClick : undefined}
           >
             {loading ? (
@@ -195,28 +171,18 @@ export default function ImageField(props: ImageFieldProps) {
             )}
           </div>
         )}
-        {validFiles.map((file) => (
-          <div
-            key={file.name}
-            className={classes.imageContainer.join(" ") + " relative"}
-          >
-            {file.uploaded && (
-              <div
-                className={classes.removeBtn.join(" ")}
-                onClick={() => removeFile(file)}
-              >
-                <TrashIcon className="w-4 text-red-6" />
-              </div>
-            )}
+        {validFiles.map((file, index) => (
+          <div key={index} className={classes.imageContainer + " relative"}>
+            <div className={classes.removeBtn} onClick={() => removeFile(file)}>
+              <TrashIcon className="w-4 text-red-6" />
+            </div>
             {file.uploading && (
               <div
                 style={{ backgroundImage: `url(${file.path})` }}
                 className="w-full h-full bg-cover bg-center rounded-lg flex justify-center items-center"
               >
                 <div className="w-3/4 h-1 rounded-lg border border-green-6">
-                  <div
-                    className={`w-[${file.progress}%] h-full bg-green-6`}
-                  ></div>
+                  <div className={`w-[${file.progress}%] h-full bg-green-6`}></div>
                 </div>
               </div>
             )}
@@ -226,15 +192,9 @@ export default function ImageField(props: ImageFieldProps) {
             />
           </div>
         ))}
-        {invalidFiles.map((file) => (
-          <div
-            key={file.name}
-            className={classes.imageContainer.join(" ") + " relative"}
-          >
-            <div
-              className={classes.removeBtn.join(" ")}
-              onClick={() => removeFile(file)}
-            >
+        {invalidFiles.map((file, index) => (
+          <div key={index} className={classes.imageContainer + " relative"}>
+            <div className={classes.removeBtn} onClick={() => removeFile(file)}>
               <TrashIcon className="w-4 text-red-6" />
             </div>
             <div
@@ -257,8 +217,8 @@ export default function ImageField(props: ImageFieldProps) {
       </div>
       <input
         ref={fileInputRef}
-        type={"file"}
-        accept={"image/*"}
+        type="file"
+        accept="image/*"
         multiple
         className="hidden"
         onChange={handleChange}
