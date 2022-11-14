@@ -8,5 +8,17 @@
     "prefix": "pig",
     "body": ["/* prettier-ignore */"],
     "description": "prettier ignore"
+  },
+  "export default function": {
+    "prefix": "comp",
+    "body": [
+      "export interface ${TM_FILENAME_BASE}Props {}",
+      "export default function ${TM_FILENAME_BASE}(props: ${TM_FILENAME_BASE}Props) {",
+      "  return (",
+      "    $1",
+      "  )",
+      "}"
+    ],
+    "description": "prettier ignore"
   }
 }

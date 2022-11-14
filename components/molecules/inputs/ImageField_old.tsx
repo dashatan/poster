@@ -45,7 +45,7 @@ export function dataURLtoFile(dataUrl: string, filename: string) {
 export default function ImageField(props: ImageFieldProps) {
   const { label, maxFiles, maxSize, minDimension, onChange } = props
 
-  const [files, setFiles] = useState<ImageObject[]>(props.files)
+  const [files, setFiles] = useState<ImageObject[]>(props.files || [])
   const [loading, setLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const validFiles = files.filter((x) => x.validation.isValid)
@@ -173,9 +173,12 @@ export default function ImageField(props: ImageFieldProps) {
         )}
         {validFiles.map((file, index) => (
           <div key={index} className={classes.imageContainer + " relative"}>
-            <div className={classes.removeBtn} onClick={() => removeFile(file)}>
-              <TrashIcon className="w-4 text-red-6" />
-            </div>
+            {file.uploaded && (
+              <div className={classes.removeBtn} onClick={() => removeFile(file)}>
+                <TrashIcon className="w-4 text-red-6" />
+              </div>
+            )}
+
             {file.uploading && (
               <div
                 style={{ backgroundImage: `url(${file.path})` }}
@@ -186,10 +189,17 @@ export default function ImageField(props: ImageFieldProps) {
                 </div>
               </div>
             )}
+
             <div
               style={{ backgroundImage: `url(${file.path})` }}
-              className="w-full h-full bg-cover bg-center rounded-lg"
-            />
+              className="w-full h-full bg-cover bg-center rounded-lg flex justify-center items-center"
+            >
+              {file.uploading && (
+                <div className="w-8 h-8">
+                  <Spinner />
+                </div>
+              )}
+            </div>
           </div>
         ))}
         {invalidFiles.map((file, index) => (

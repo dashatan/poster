@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { ImageObject } from "../../components/molecules/inputs/ImageField"
 
 export interface FormDataSliceInterface {
   post: { key: string; value: string }[]
-  postImages: ImageObject[]
 }
 
 export const initialState: FormDataSliceInterface = {
@@ -13,7 +11,6 @@ export const initialState: FormDataSliceInterface = {
     { key: "description", value: "" },
     { key: "images", value: "" },
   ],
-  postImages: [],
 }
 
 export const FormData = createSlice({
@@ -23,11 +20,8 @@ export const FormData = createSlice({
     post: (state, action) => {
       state.post = action.payload
     },
-    postImages: (state, action) => {
-      state.postImages = action.payload
-    },
   },
 })
 
-export const { post, postImages } = FormData.actions
+export const { post } = FormData.actions
 export default FormData.reducer

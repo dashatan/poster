@@ -1,14 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { XCircleIcon } from "@heroicons/react/24/outline"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { useAppDispatch, useAppSelector } from "../../utils/hooks"
 import { useCategoriesQuery } from "../../utils/slices/api"
-import { post, postImages } from "../../utils/slices/formData"
+import { post } from "../../utils/slices/formData"
 import Spinner from "../../components/atoms/Spinner"
 import CreatePost, { KeyValueObj } from "../../components/templates/phone/CreatePost"
 import FullScreenModal from "../../components/templates/phone/FullScreenModal"
-import { ImageObject } from "../../components/molecules/inputs/ImageField"
-import axios from "axios"
 
 export interface PostObject {
   title: string
@@ -22,8 +20,6 @@ export interface PostObject {
 export default function Create(): JSX.Element {
   const dispatch = useAppDispatch()
   const formData = useAppSelector((state) => state.formData.post)
-  const postImages = useAppSelector((state) => state.formData.postImages)
-  const [images, setImages] = useState(postImages)
   const {
     data: categories,
     isLoading: catsLoading,
@@ -35,30 +31,6 @@ export default function Create(): JSX.Element {
     window.localStorage.setItem("PostFormData", JSON.stringify(formData))
   }
 
-  async function handleImages(images: ImageObject[]) {
-    const baseUrl = "http://localhost:5000"
-    const newImages = images.map(async (image) => {
-      if (image.uploaded) return
-      const Fd = new FormData()
-      Fd.append("userId", "1")
-      Fd.append("image", image.file)
-      return await axios
-        .post(baseUrl + "/upload/tmp", Fd, {
-          onUploadProgress: (e) => {},
-        })
-        .then((res) => {
-          console.log(res)
-          const path = baseUrl + "/tmp/" + res.data.filename
-          return { ...image, path, file: [], uploaded: true }
-        })
-        .catch((err) => console.log(err))
-    })
-
-    const res = await Promise.all(newImages)
-
-    console.log(res)
-  }
-
   useEffect(() => {
     const fd = window.localStorage.getItem("PostFormData")
     if (fd) dispatch(post(JSON.parse(fd)))
@@ -67,13 +39,7 @@ export default function Create(): JSX.Element {
   const createPost = useMemo(() => {
     if (!categories || !formData) return
     return (
-      <CreatePost
-        categories={categories}
-        formData={formData}
-        onChange={handleChange}
-        images={images}
-        onImageChange={handleImages}
-      />
+      <CreatePost categories={categories} formData={formData} onChange={handleChange} />
     )
   }, [categories, formData])
   return (

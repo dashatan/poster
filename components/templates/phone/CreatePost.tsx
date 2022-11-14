@@ -8,7 +8,7 @@ import { useRouter } from "next/router"
 import TextField from "../../molecules/inputs/TextField"
 import Button from "../../atoms/buttons/Button"
 import { initialState } from "../../../utils/slices/formData"
-import ImageField, { dataURLtoFile, ImageObject } from "../../molecules/inputs/ImageField"
+import ImageField from "../../molecules/inputs/ImageField"
 
 export interface KeyValueObj {
   key: string
@@ -17,14 +17,12 @@ export interface KeyValueObj {
 
 export interface CreatePostProps {
   categories: Category[]
-  images: ImageObject[]
   formData: KeyValueObj[]
   onChange: (FormData: KeyValueObj[]) => void
-  onImageChange: (images: ImageObject[]) => void
 }
 
 export default function CreatePost(props: CreatePostProps) {
-  const { onChange, formData, categories, onImageChange, images } = props
+  const { onChange, formData, categories } = props
   const [fields, setFields] = useState<Attribute[]>([])
 
   const router = useRouter()
@@ -99,12 +97,12 @@ export default function CreatePost(props: CreatePostProps) {
       )}
       <div className="border-b w-full my-4" />
       <ImageField
+        label="images"
+        value={getVal("images")}
         maxFiles={20}
         maxSize={5}
         minDimension={[600, 600]}
-        label="images"
-        files={images}
-        onChange={onImageChange}
+        onChange={handleChange}
       />
       {titleField}
       <TextField
