@@ -18,11 +18,12 @@ export interface KeyValueObj {
 export interface CreatePostProps {
   categories: Category[]
   formData: KeyValueObj[]
+  imageApi: string
   onChange: (FormData: KeyValueObj[]) => void
 }
 
-export default function CreatePost(props: CreatePostProps) {
-  const { onChange, formData, categories } = props
+export default function NewPostForm(props: CreatePostProps) {
+  const { onChange, formData, categories, imageApi } = props
   const [fields, setFields] = useState<Attribute[]>([])
 
   const router = useRouter()
@@ -103,6 +104,7 @@ export default function CreatePost(props: CreatePostProps) {
         maxSize={5}
         minDimension={[600, 600]}
         onChange={handleChange}
+        api={imageApi}
       />
       {titleField}
       <TextField

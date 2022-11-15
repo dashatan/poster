@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import axios from "axios"
 import { ChangeEvent, useEffect, useState } from "react"
 import { useUploadTmpMutation } from "../../../../utils/slices/api"
 import Info from "../../alerts/Info"
@@ -13,6 +14,7 @@ export interface ImageFieldProps {
   maxFiles: number
   maxSize: number // in MB
   minDimension: [number, number]
+  api: string
   onChange?: (key: string, value: string) => void
 }
 export interface ImageObject {
@@ -31,7 +33,7 @@ export interface Validation {
 }
 
 export default function ImageField(props: ImageFieldProps) {
-  const { label, maxFiles, maxSize, minDimension, onChange, value } = props
+  const { label, maxFiles, maxSize, minDimension, onChange, value, api } = props
 
   const [files, setFiles] = useState<ImageObject[]>([])
   const [Progress, setProgress] = useState(0)
@@ -82,18 +84,16 @@ export default function ImageField(props: ImageFieldProps) {
     )
     const res = await Promise.all(filePromise)
     const newFiles = [...validFiles, ...res]
-    console.log(newFiles)
+
     setFiles(newFiles)
     e.target.value = "" //empty file input
-    const filesToUpload = newFiles.filter(
-      (x) => x.validation.isValid && x.uploaded === false
-    )
-    // upload(filesToUpload)
-    //   .then((res) => {
-    //     setFiles(res.files)
-    //     onChange && onChange("images", res.images.join(","))
-    //   })
-    //   .catch(() => {})
+    const filesToUpload = newFiles.filter((x) => x.validation.isValid && !x.uploaded)
+    upload(filesToUpload)
+      .then((res) => {
+        setFiles(res.files)
+        onChange && onChange("images", res.images.join(","))
+      })
+      .catch(() => {})
   }
 
   async function upload(images: ImageObject[]) {
@@ -107,25 +107,37 @@ export default function ImageField(props: ImageFieldProps) {
         const data = new FormData()
         data.append("userId", "1")
         data.append("image", image.file)
-        try {
-          const payload = await uploadTmpImage({
-            data,
-            onUploadProgress(e) {
+        const validation: Validation = { isValid: false, errorCode: "default" }
+        let imgObj: ImageObject = {
+          ...image,
+          file: undefined,
+          uploaded: true,
+          validation,
+        }
+        console.log(api)
+        await axios
+          .post(api, data, {
+            onUploadProgress: (e) => {
               e.total && setProgress(Math.round((100 * e.loaded) / e.total))
             },
-          }).unwrap()
-          newUrls.push(payload)
-          return { ...image, path: payload, file: undefined, uploaded: true }
-        } catch (error) {
-          return {
-            ...image,
-            uploaded: true,
-            file: undefined,
-            validation: { isValid: false, errorCode: "default" },
-          }
-        }
+          })
+          .then((res) => {
+            console.log(res)
+            const { path } = res.data
+            newUrls.push(path)
+            imgObj = {
+              ...imgObj,
+              path,
+              validation: { isValid: true, errorCode: "valid" },
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        return imgObj
       })
     )
+    setCurrentFile("")
     return { images: newUrls, files: newImages }
   }
 

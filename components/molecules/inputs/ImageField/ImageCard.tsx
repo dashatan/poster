@@ -39,9 +39,10 @@ export default function ImageCard({
   return (
     <div className={box}>
       <RemoveBtn name={name} onClick={isUploading ? oncancel : onRemove} />
-      <Thumbnail src={thumbnail} />
-      {isUploading && <ProgressBar progress={progress || 0} />}
-      {!isValid && <XMarkIcon className="w-12 text-red-6" />}
+      <Thumbnail src={thumbnail}>
+        {isUploading && <ProgressBar progress={progress || 0} />}
+        {!isValid && <XMarkIcon className="w-12 text-red-6" />}
+      </Thumbnail>
     </div>
   )
 }

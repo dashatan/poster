@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../utils/hooks"
 import { useCategoriesQuery } from "../../utils/slices/api"
 import { post } from "../../utils/slices/formData"
 import Spinner from "../../components/atoms/Spinner"
-import CreatePost, { KeyValueObj } from "../../components/templates/phone/CreatePost"
+import NewPostForm, { KeyValueObj } from "../../components/templates/phone/NewPostForm"
 import FullScreenModal from "../../components/templates/phone/FullScreenModal"
 
 export interface PostObject {
@@ -36,10 +36,15 @@ export default function Create(): JSX.Element {
     if (fd) dispatch(post(JSON.parse(fd)))
   }, [])
 
-  const createPost = useMemo(() => {
+  const newPost = useMemo(() => {
     if (!categories || !formData) return
     return (
-      <CreatePost categories={categories} formData={formData} onChange={handleChange} />
+      <NewPostForm
+        categories={categories}
+        formData={formData}
+        imageApi="http://localhost:5000/upload/tmp"
+        onChange={handleChange}
+      />
     )
   }, [categories, formData])
   return (
@@ -57,7 +62,7 @@ export default function Create(): JSX.Element {
             utils
           </div>
         )}
-        {createPost}
+        {newPost}
       </FullScreenModal>
     </div>
   )
