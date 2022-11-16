@@ -5,10 +5,8 @@ import RemoveBtn from "./RemoveBtn"
 import Thumbnail from "./Thumbnail"
 
 export interface ImageCardProps {
-  name: string
-  thumbnail: string
-  onRemove?: (name: string) => void
-  oncancel?: (name: string) => void
+  path: string
+  onRemove: (path: string) => void
   progress?: number
   isValid?: boolean
   isUploading?: boolean
@@ -28,18 +26,16 @@ const box = [
 ].join(" ")
 
 export default function ImageCard({
-  name,
-  thumbnail,
+  path,
   onRemove,
-  oncancel,
   progress,
   isValid,
   isUploading,
 }: ImageCardProps) {
   return (
     <div className={box}>
-      <RemoveBtn name={name} onClick={isUploading ? oncancel : onRemove} />
-      <Thumbnail src={thumbnail}>
+      <RemoveBtn onClick={() => onRemove(path)} />
+      <Thumbnail src={path}>
         {isUploading && <ProgressBar progress={progress || 0} />}
         {!isValid && <XMarkIcon className="w-12 text-red-6" />}
       </Thumbnail>

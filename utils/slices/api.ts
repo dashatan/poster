@@ -6,12 +6,13 @@ import categoriesQuery from "../gqlQueries/categoriesQuery"
 import postsQuery from "../gqlQueries/postsQuery"
 import Category from "../types/Category"
 import Post from "../types/Post"
-const baseUrl = "http://localhost:5000"
 
 interface UploadTmpArgs {
   data: FormData
   onUploadProgress: (progressEvent: AxiosProgressEvent) => void
 }
+
+const baseUrl = "http://localhost:5000"
 
 export const API = createApi({
   reducerPath: "api",
@@ -32,17 +33,20 @@ export const API = createApi({
     createPost: builder.mutation<{}, PostObject>({
       query: createPost,
     }),
-    uploadTmp: builder.mutation<string, UploadTmpArgs>({
-      queryFn: ({ data, onUploadProgress }) => {
-        const api = baseUrl + "/upload/tmp"
-        const res = axios
-          .post(api, data, {
-            onUploadProgress,
-          })
-          .then((res) => ({ data: baseUrl + "/tmp/" + res.data.filename }))
-          .catch((err) => ({ error: err }))
-        return res
+    uploadTmpFile: builder.mutation<string, UploadTmpArgs>({
+      queryFn: async ({ data, onUploadProgress }) => {
+        const api = baseUrl + "/file/upload/tmp"
+        return await axios
+          .post(api, data, { onUploadProgress })
+          .then((res) => ({ data: `${baseUrl}/${res.data}` }))
+          .catch((err) => ({ error: err.message }))
       },
+    }),
+    removeTmpFile: builder.mutation<{ success: boolean; message: string }, string>({
+      query: (path) => ({
+        url: "/file/remove/tmp/" + path.split("/").pop(),
+        method: "DELETE",
+      }),
     }),
   }),
 })
@@ -51,5 +55,6 @@ export const {
   usePostsQuery,
   useCategoriesQuery,
   useCreatePostMutation,
-  useUploadTmpMutation,
+  useUploadTmpFileMutation,
+  useRemoveTmpFileMutation,
 } = API

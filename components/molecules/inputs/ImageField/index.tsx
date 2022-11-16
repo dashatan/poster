@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import axios from "axios"
-import { ChangeEvent, useEffect, useState } from "react"
-import { useUploadTmpMutation } from "../../../../utils/slices/api"
+import { ChangeEvent, useEffect, useMemo, useState } from "react"
+import {
+  useRemoveTmpFileMutation,
+  useUploadTmpFileMutation,
+} from "../../../../utils/slices/api"
 import Info from "../../alerts/Info"
 import ImageCard from "./ImageCard"
 import ImageContainer from "./ImageContainer"
@@ -14,7 +16,6 @@ export interface ImageFieldProps {
   maxFiles: number
   maxSize: number // in MB
   minDimension: [number, number]
-  api: string
   onChange?: (key: string, value: string) => void
 }
 export interface ImageObject {
@@ -33,13 +34,16 @@ export interface Validation {
 }
 
 export default function ImageField(props: ImageFieldProps) {
-  const { label, maxFiles, maxSize, minDimension, onChange, value, api } = props
+  const { label, maxFiles, maxSize, minDimension, onChange, value } = props
 
   const [files, setFiles] = useState<ImageObject[]>([])
   const [Progress, setProgress] = useState(0)
-  const [CurrentFile, setCurrentFile] = useState("")
-  const [uploadTmpImage] = useUploadTmpMutation()
-
+  const [currentFile, setCurrentFile] = useState("")
+  const [uploadTmp] = useUploadTmpFileMutation()
+  const [removeTmp] = useRemoveTmpFileMutation()
+  const cf = useMemo(() => {
+    return currentFile
+  }, [currentFile])
   useEffect(() => {
     if (!value) return
     const urls = value.split(",")
@@ -88,60 +92,58 @@ export default function ImageField(props: ImageFieldProps) {
     setFiles(newFiles)
     e.target.value = "" //empty file input
     const filesToUpload = newFiles.filter((x) => x.validation.isValid && !x.uploaded)
-    upload(filesToUpload)
-      .then((res) => {
-        setFiles(res.files)
-        onChange && onChange("images", res.images.join(","))
+    sequentialUpload(filesToUpload).then(() => {
+      setProgress(0)
+      setCurrentFile("")
+    })
+  }
+
+  async function sequentialUpload(images: ImageObject[]) {
+    const urls = value ? value.split(",") : []
+    const newUrls = [...urls]
+    for (const image of images) {
+      if (!image.file) return
+      setCurrentFile(image.name)
+      setProgress(0)
+      const data = new FormData()
+      data.append("expire", (1000 * 60 * 60 * 24).toString())
+      data.append("image", image.file)
+      const onUploadProgress = (e: any) => {
+        setProgress(Math.round(100 * e.progress))
+      }
+      const validation: Validation = { isValid: false, errorCode: "default" }
+      let imgObj: ImageObject = {
+        ...image,
+        validation,
+        uploaded: true,
+        file: undefined,
+      }
+      try {
+        const payload = await uploadTmp({ data, onUploadProgress }).unwrap()
+        const path = payload
+        const validation: Validation = { isValid: true, errorCode: "valid" }
+        imgObj = { ...imgObj, path, validation }
+        newUrls.push(path)
+        onChange && onChange("images", newUrls.join(","))
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error)
+      }
+
+      setFiles((files) => files.map((file) => (file.name === image.name ? imgObj : file)))
+    }
+  }
+
+  async function handleRemove(path: string) {
+    await removeTmp(path)
+      .unwrap()
+      .then(() => {
+        const images = value?.split(",").filter((x) => x !== path)
+        setFiles((files) => files.filter((x) => x.path !== path))
+        if (images && onChange) onChange("images", images.join(","))
       })
       .catch(() => {})
   }
-
-  async function upload(images: ImageObject[]) {
-    const urls = value ? value.split(",") : []
-    const newUrls = [...urls]
-    const newImages: ImageObject[] = await Promise.all(
-      images.map(async (image) => {
-        if (!image.file) return { ...image }
-        setCurrentFile(image.name)
-        setProgress(0)
-        const data = new FormData()
-        data.append("userId", "1")
-        data.append("image", image.file)
-        const validation: Validation = { isValid: false, errorCode: "default" }
-        let imgObj: ImageObject = {
-          ...image,
-          file: undefined,
-          uploaded: true,
-          validation,
-        }
-        console.log(api)
-        await axios
-          .post(api, data, {
-            onUploadProgress: (e) => {
-              e.total && setProgress(Math.round((100 * e.loaded) / e.total))
-            },
-          })
-          .then((res) => {
-            console.log(res)
-            const { path } = res.data
-            newUrls.push(path)
-            imgObj = {
-              ...imgObj,
-              path,
-              validation: { isValid: true, errorCode: "valid" },
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-        return imgObj
-      })
-    )
-    setCurrentFile("")
-    return { images: newUrls, files: newImages }
-  }
-
-  function handleRemove(name: string) {}
 
   return (
     <>
@@ -150,12 +152,11 @@ export default function ImageField(props: ImageFieldProps) {
         {files.map((file, index) => (
           <ImageCard
             key={index}
-            name={file.name}
-            thumbnail={file.path}
+            path={file.path}
             progress={Progress}
             onRemove={handleRemove}
             isValid={file.validation.isValid}
-            isUploading={file.name === CurrentFile}
+            isUploading={file.name === cf}
           />
         ))}
       </ImageContainer>

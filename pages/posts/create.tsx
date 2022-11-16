@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { XCircleIcon } from "@heroicons/react/24/outline"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../utils/hooks"
 import { useCategoriesQuery } from "../../utils/slices/api"
 import { post } from "../../utils/slices/formData"
@@ -18,6 +18,7 @@ export interface PostObject {
 }
 
 export default function Create(): JSX.Element {
+  const [lsChecked, setLsChecked] = useState(false)
   const dispatch = useAppDispatch()
   const formData = useAppSelector((state) => state.formData.post)
   const {
@@ -34,27 +35,25 @@ export default function Create(): JSX.Element {
   useEffect(() => {
     const fd = window.localStorage.getItem("PostFormData")
     if (fd) dispatch(post(JSON.parse(fd)))
+    setLsChecked(true)
   }, [])
 
   const newPost = useMemo(() => {
-    if (!categories || !formData) return
+    if (!categories || !formData || !lsChecked) return undefined
     return (
-      <NewPostForm
-        categories={categories}
-        formData={formData}
-        imageApi="http://localhost:5000/upload/tmp"
-        onChange={handleChange}
-      />
+      <NewPostForm categories={categories} formData={formData} onChange={handleChange} />
     )
-  }, [categories, formData])
+  }, [categories, formData, lsChecked])
+
   return (
     <div className="h-screen w-screen">
       <FullScreenModal heading="Add New Post">
-        {catsLoading && (
-          <div className="flex flex-col justify-center items-center h-10 mt-4">
-            <Spinner />
-          </div>
-        )}
+        {catsLoading ||
+          (!newPost && (
+            <div className="flex flex-col justify-center items-center h-10 mt-4">
+              <Spinner />
+            </div>
+          ))}
         {catsErr && (
           <div className="flex flex-col justify-center items-center mt-4">
             <XCircleIcon className="w-16" />

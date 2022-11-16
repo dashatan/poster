@@ -18,12 +18,11 @@ export interface KeyValueObj {
 export interface CreatePostProps {
   categories: Category[]
   formData: KeyValueObj[]
-  imageApi: string
   onChange: (FormData: KeyValueObj[]) => void
 }
 
 export default function NewPostForm(props: CreatePostProps) {
-  const { onChange, formData, categories, imageApi } = props
+  const { onChange, formData, categories } = props
   const [fields, setFields] = useState<Attribute[]>([])
 
   const router = useRouter()
@@ -40,7 +39,12 @@ export default function NewPostForm(props: CreatePostProps) {
   function handleCategoryChange(category: Category) {
     const attrs = category.attributes
     setFields(attrs || [])
-    const newFormData = setFdVal(newFd(attrs || []), "category", category.slug)
+    const persisters = ["images"]
+    let newFormData = newFd(attrs || [])
+    newFormData = setFdVal(newFormData, "category", category.slug)
+    for (const persister of persisters) {
+      newFormData = setFdVal(newFormData, persister, getVal(persister))
+    }
     onChange(newFormData)
   }
 
@@ -104,7 +108,6 @@ export default function NewPostForm(props: CreatePostProps) {
         maxSize={5}
         minDimension={[600, 600]}
         onChange={handleChange}
-        api={imageApi}
       />
       {titleField}
       <TextField

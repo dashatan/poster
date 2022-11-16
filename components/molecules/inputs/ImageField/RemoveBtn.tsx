@@ -1,9 +1,9 @@
 import { TrashIcon } from "@heroicons/react/24/outline"
 
 export interface RemoveBtnProps {
-  name: string
-  onClick?: (name: string) => void
+  onClick: () => void
 }
+
 const rmBtn = [
   "w-6",
   "h-6",
@@ -16,9 +16,10 @@ const rmBtn = [
   "items-center",
   "rounded-full",
 ].join(" ")
-export default function RemoveBtn({ name, onClick }: RemoveBtnProps) {
+
+export default function RemoveBtn({ onClick }: RemoveBtnProps) {
   return (
-    <div className={rmBtn} onClick={() => onClick && onClick(name)}>
+    <div className={rmBtn} onClick={() => onClick()}>
       <TrashIcon className="w-4 text-red-6" />
     </div>
   )
