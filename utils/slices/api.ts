@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import axios, { AxiosProgressEvent } from "axios"
-import { PostObject } from "../../pages/posts/create"
-import createPost from "../gqlMutations/createPost"
+import createPost, { PostObject } from "../gqlMutations/createPost"
 import categoriesQuery from "../gqlQueries/categoriesQuery"
 import postsQuery from "../gqlQueries/postsQuery"
 import Category from "../types/Category"

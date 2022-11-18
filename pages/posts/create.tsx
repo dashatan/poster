@@ -1,36 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { XCircleIcon } from "@heroicons/react/24/outline"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../utils/hooks"
-import { useCategoriesQuery } from "../../utils/slices/api"
+import { useCategoriesQuery, useCreatePostMutation } from "../../utils/slices/api"
 import { post } from "../../utils/slices/formData"
 import Spinner from "../../components/atoms/Spinner"
-import NewPostForm, { KeyValueObj } from "../../components/templates/phone/NewPostForm"
+import NewPostForm from "../../components/templates/phone/NewPostForm"
 import FullScreenModal from "../../components/templates/phone/FullScreenModal"
-
-export interface PostObject {
-  title: string
-  categoryId: string
-  cityId: string
-  userId: string
-  attributes: KeyValueObj[]
-  images: string[]
-}
+import { KeyValueObj } from "../../utils/types"
 
 export default function Create(): JSX.Element {
   const [lsChecked, setLsChecked] = useState(false)
   const dispatch = useAppDispatch()
   const formData = useAppSelector((state) => state.formData.post)
-  const {
-    data: categories,
-    isLoading: catsLoading,
-    error: catsErr,
-  } = useCategoriesQuery()
-
-  function handleChange(formData: KeyValueObj[]) {
-    dispatch(post(formData))
-    window.localStorage.setItem("PostFormData", JSON.stringify(formData))
-  }
+  const categories = useCategoriesQuery()
+  const [createPost, postRes] = useCreatePostMutation()
+  const required = ["category", "title", "description", "images", "city"]
 
   useEffect(() => {
     const fd = window.localStorage.getItem("PostFormData")
@@ -38,30 +23,55 @@ export default function Create(): JSX.Element {
     setLsChecked(true)
   }, [])
 
-  const newPost = useMemo(() => {
-    if (!categories || !formData || !lsChecked) return undefined
-    return (
-      <NewPostForm categories={categories} formData={formData} onChange={handleChange} />
-    )
-  }, [categories, formData, lsChecked])
+  function handleChange(formData: KeyValueObj[]) {
+    dispatch(post(formData))
+    window.localStorage.setItem("PostFormData", JSON.stringify(formData))
+  }
+
+  const getVal = (key: string) => formData.find((x) => x.key === key)?.value || ""
+
+  function handleSubmit() {
+    const exceptions = ["category", "title", "description", "images", "cityId"]
+    const attributes = formData.filter((x) => !exceptions.includes(x.key))
+    try {
+      createPost({
+        userId: "1",
+        cityId: getVal("city"),
+        categoryId: getVal("category"),
+        title: getVal("title"),
+        images: getVal("images").split(","),
+        attributes,
+      })
+      console.log(postRes.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="h-screen w-screen">
       <FullScreenModal heading="Add New Post">
-        {catsLoading ||
-          (!newPost && (
-            <div className="flex flex-col justify-center items-center h-10 mt-4">
-              <Spinner />
-            </div>
-          ))}
-        {catsErr && (
+        {(categories.isLoading || !lsChecked) && (
+          <div className="flex flex-col justify-center items-center h-10 mt-4">
+            <Spinner />
+          </div>
+        )}
+        {categories.isError && (
           <div className="flex flex-col justify-center items-center mt-4">
             <XCircleIcon className="w-16" />
             <div className="text-xl">Some thing went wrong</div>
             utils
           </div>
         )}
-        {newPost}
+        {categories.data && formData && lsChecked && (
+          <NewPostForm
+            categories={categories.data}
+            formData={formData}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            requiredFields={required}
+          />
+        )}
       </FullScreenModal>
     </div>
   )

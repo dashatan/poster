@@ -1,4 +1,3 @@
-import { useMemo } from "react"
 import Attribute, { Prop } from "../../../utils/types/Attribute"
 import CheckBoxField from "../../molecules/inputs/CheckBoxField"
 import NumberField from "../../molecules/inputs/NumberField"

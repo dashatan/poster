@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import FormCreator from "../../organisms/forms/FormCreator"
 import Category from "../../../utils/types/Category"
 import SelectField from "../../molecules/inputs/SelectField"
@@ -9,20 +9,18 @@ import TextField from "../../molecules/inputs/TextField"
 import Button from "../../atoms/buttons/Button"
 import { initialState } from "../../../utils/slices/formData"
 import ImageField from "../../molecules/inputs/ImageField"
-
-export interface KeyValueObj {
-  key: string
-  value: string
-}
+import { KeyValueObj } from "../../../utils/types"
 
 export interface CreatePostProps {
   categories: Category[]
   formData: KeyValueObj[]
   onChange: (FormData: KeyValueObj[]) => void
+  onSubmit: () => void
+  requiredFields?: string[]
 }
 
 export default function NewPostForm(props: CreatePostProps) {
-  const { onChange, formData, categories } = props
+  const { onChange, formData, categories, onSubmit, requiredFields } = props
   const [fields, setFields] = useState<Attribute[]>([])
 
   const router = useRouter()
@@ -74,18 +72,29 @@ export default function NewPostForm(props: CreatePostProps) {
     return obj ? obj.value : ""
   }
 
-  function onSubmit() {}
+  const validate = (keys: string[]) => {
+    return new Promise((resolve, reject) => {
+      const illegals = ["", undefined, null]
+      const inValids = []
+      for (const key of keys) {
+        if (illegals.includes(getVal(key))) inValids.push(key)
+      }
+      if (inValids.length > 0) reject(inValids)
+      else resolve("ok")
+    })
+  }
 
-  const titleField = useMemo(() => {
-    return (
-      <TextField
-        key={"title" + getVal("category")}
-        value={getVal("title")}
-        label="Title"
-        onChange={handleChange}
-      />
-    )
-  }, [getVal("title")])
+  function submit() {
+    if (requiredFields) {
+      validate(requiredFields)
+        .then(() => onSubmit())
+        .catch((keys) => {
+          console.log("required", keys)
+        })
+    } else {
+      onSubmit()
+    }
+  }
 
   return (
     <div className="h-full overflow-y-auto py-2 hide-scrollbar">
@@ -109,14 +118,28 @@ export default function NewPostForm(props: CreatePostProps) {
         minDimension={[600, 600]}
         onChange={handleChange}
       />
-      {titleField}
+      <div className="border-b w-full my-4" />
+      {/* <SelectField
+        key={`category${getVal("category")}`}
+        label={"Category"}
+        value={getVal("category")}
+        options={categories}
+        onChange={handleChange}
+        url="categories"
+      /> */}
+      <TextField
+        key={"title" + getVal("category")}
+        value={getVal("title")}
+        label="Title"
+        onChange={handleChange}
+      />
       <TextField
         key={"description" + getVal("category")}
         value={getVal("description")}
         label="Description"
         onChange={handleChange}
       />
-      <Button label="Save" color="green" onClick={onSubmit} />
+      <Button label="Save" color="green" onClick={submit} />
     </div>
   )
 }

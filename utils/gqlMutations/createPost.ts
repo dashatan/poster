@@ -1,5 +1,13 @@
-import { PostObject } from "../../pages/posts/create"
+import { KeyValueObj } from "../types"
 
+export interface PostObject {
+  title: string
+  categoryId: string
+  cityId: string
+  userId: string
+  attributes: KeyValueObj[]
+  images: string[]
+}
 export default function createPost(body: PostObject) {
   const { title, attributes, categoryId, cityId, images, userId } = body
   return `/gql?mutation {

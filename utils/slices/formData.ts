@@ -6,6 +6,8 @@ export interface FormDataSliceInterface {
 
 export const initialState: FormDataSliceInterface = {
   post: [
+    { key: "userId", value: "" },
+    { key: "city", value: "" },
     { key: "category", value: "" },
     { key: "title", value: "" },
     { key: "description", value: "" },
