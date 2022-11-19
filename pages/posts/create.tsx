@@ -36,16 +36,18 @@ export default function Create(): JSX.Element {
   const getVal = (key: string) => formData.find((x) => x.key === key)?.value || ""
 
   function handleSubmit() {
-    const exceptions = ["category", "title", "description", "images", "cityId"]
+    const exceptions = ["category", "title", "description", "images", "city"]
     const attributes = formData.filter((x) => !exceptions.includes(x.key))
-    createPost({
-      userId: "1",
+    const args = {
+      userId: "63793f2ae6c0220d9c076717",
       cityId: getVal("city"),
       categoryId: getVal("category"),
       title: getVal("title"),
+      description: getVal("description"),
       images: getVal("images").split(","),
       attributes,
-    })
+    }
+    createPost({ body: args })
       .then((res) => console.log(res))
       .catch((err) => console.log(err))
   }

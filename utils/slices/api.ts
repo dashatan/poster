@@ -13,6 +13,11 @@ interface UploadTmpArgs {
   onUploadProgress: (progressEvent: AxiosProgressEvent) => void
 }
 
+interface GqlMutationResponse {
+  data: {}
+  error: []
+}
+
 const baseUrl = "http://localhost:5000"
 
 export const API = createApi({
@@ -40,11 +45,17 @@ export const API = createApi({
         return response.data.posts
       },
     }),
-    createPost: builder.mutation<{}, PostObject>({
-      query: (body) => ({
-        url: baseUrl + createPost(body),
-        method: "POST",
-      }),
+    createPost: builder.mutation<{}, { body: PostObject }>({
+      queryFn: async ({ body }) => {
+        const options = {
+          url: baseUrl + "/post",
+          method: "POST",
+          data: body,
+        }
+        return await axios(options)
+          .then((res) => ({ data: res.data }))
+          .catch((err) => ({ error: err.response.data }))
+      },
     }),
 
     // fileAPIs
@@ -53,7 +64,7 @@ export const API = createApi({
         const api = baseUrl + "/file/upload/tmp"
         return await axios
           .post(api, data, { onUploadProgress })
-          .then((res) => ({ data: `${baseUrl}/${res.data}` }))
+          .then((res) => ({ data: res.data }))
           .catch((err) => ({ error: err.message }))
       },
     }),
