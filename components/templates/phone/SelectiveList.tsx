@@ -4,7 +4,6 @@ import ViewportList from "react-viewport-list"
 import Fuse from "fuse.js"
 import ListItemCard from "../../molecules/cards/ListItemCard"
 import SearchField from "../../molecules/inputs/SearchField"
-import PhoneTopHeader from "../../organisms/headers/PhoneTopHeader"
 import FullScreenModal from "./FullScreenModal"
 
 export interface ListItem {

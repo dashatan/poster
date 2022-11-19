@@ -1,7 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import axios, { AxiosProgressEvent } from "axios"
+import { ListItem } from "../../components/templates/phone/SelectiveList"
 import createPost, { PostObject } from "../gqlMutations/createPost"
 import categoriesQuery from "../gqlQueries/categoriesQuery"
+import citiesQuery from "../gqlQueries/citiesQuery"
 import postsQuery from "../gqlQueries/postsQuery"
 import Category from "../types/Category"
 import Post from "../types/Post"
@@ -17,21 +19,35 @@ export const API = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl }),
   endpoints: (builder) => ({
-    posts: builder.query<Post[], void>({
-      query: postsQuery,
-      transformResponse: (response: { data: { posts: Post[] } }) => {
-        return response.data.posts
-      },
-    }),
+    // staticAPIs
     categories: builder.query<Category[], void>({
       query: categoriesQuery,
       transformResponse: (response: { data: { categories: Category[] } }) => {
         return response.data.categories
       },
     }),
-    createPost: builder.mutation<{}, PostObject>({
-      query: createPost,
+    cities: builder.query<ListItem[], void>({
+      query: citiesQuery,
+      transformResponse: (response: { data: { cities: ListItem[] } }) => {
+        return response.data.cities
+      },
     }),
+
+    // postAPIs
+    posts: builder.query<Post[], void>({
+      query: postsQuery,
+      transformResponse: (response: { data: { posts: Post[] } }) => {
+        return response.data.posts
+      },
+    }),
+    createPost: builder.mutation<{}, PostObject>({
+      query: (body) => ({
+        url: baseUrl + createPost(body),
+        method: "POST",
+      }),
+    }),
+
+    // fileAPIs
     uploadTmpFile: builder.mutation<string, UploadTmpArgs>({
       queryFn: async ({ data, onUploadProgress }) => {
         const api = baseUrl + "/file/upload/tmp"
@@ -47,12 +63,15 @@ export const API = createApi({
         method: "DELETE",
       }),
     }),
+
+    // END OF APIs
   }),
 })
 
 export const {
-  usePostsQuery,
   useCategoriesQuery,
+  useCitiesQuery,
+  usePostsQuery,
   useCreatePostMutation,
   useUploadTmpFileMutation,
   useRemoveTmpFileMutation,

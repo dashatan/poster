@@ -2,7 +2,11 @@
 import { XCircleIcon } from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../utils/hooks"
-import { useCategoriesQuery, useCreatePostMutation } from "../../utils/slices/api"
+import {
+  useCategoriesQuery,
+  useCitiesQuery,
+  useCreatePostMutation,
+} from "../../utils/slices/api"
 import { post } from "../../utils/slices/formData"
 import Spinner from "../../components/atoms/Spinner"
 import NewPostForm from "../../components/templates/phone/NewPostForm"
@@ -14,6 +18,7 @@ export default function Create(): JSX.Element {
   const dispatch = useAppDispatch()
   const formData = useAppSelector((state) => state.formData.post)
   const categories = useCategoriesQuery()
+  const cities = useCitiesQuery()
   const [createPost, postRes] = useCreatePostMutation()
   const required = ["category", "title", "description", "images", "city"]
 
@@ -33,25 +38,22 @@ export default function Create(): JSX.Element {
   function handleSubmit() {
     const exceptions = ["category", "title", "description", "images", "cityId"]
     const attributes = formData.filter((x) => !exceptions.includes(x.key))
-    try {
-      createPost({
-        userId: "1",
-        cityId: getVal("city"),
-        categoryId: getVal("category"),
-        title: getVal("title"),
-        images: getVal("images").split(","),
-        attributes,
-      })
-      console.log(postRes.data)
-    } catch (error) {
-      console.log(error)
-    }
+    createPost({
+      userId: "1",
+      cityId: getVal("city"),
+      categoryId: getVal("category"),
+      title: getVal("title"),
+      images: getVal("images").split(","),
+      attributes,
+    })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err))
   }
 
   return (
     <div className="h-screen w-screen">
       <FullScreenModal heading="Add New Post">
-        {(categories.isLoading || !lsChecked) && (
+        {(categories.isLoading || cities.isLoading || !lsChecked) && (
           <div className="flex flex-col justify-center items-center h-10 mt-4">
             <Spinner />
           </div>
@@ -63,9 +65,10 @@ export default function Create(): JSX.Element {
             utils
           </div>
         )}
-        {categories.data && formData && lsChecked && (
+        {categories.data && cities.data && formData && lsChecked && (
           <NewPostForm
             categories={categories.data}
+            cities={cities.data}
             formData={formData}
             onChange={handleChange}
             onSubmit={handleSubmit}

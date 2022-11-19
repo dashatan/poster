@@ -10,9 +10,11 @@ import Button from "../../atoms/buttons/Button"
 import { initialState } from "../../../utils/slices/formData"
 import ImageField from "../../molecules/inputs/ImageField"
 import { KeyValueObj } from "../../../utils/types"
+import { ListItem } from "./SelectiveList"
 
 export interface CreatePostProps {
   categories: Category[]
+  cities: ListItem[]
   formData: KeyValueObj[]
   onChange: (FormData: KeyValueObj[]) => void
   onSubmit: () => void
@@ -20,7 +22,7 @@ export interface CreatePostProps {
 }
 
 export default function NewPostForm(props: CreatePostProps) {
-  const { onChange, formData, categories, onSubmit, requiredFields } = props
+  const { onChange, formData, categories, onSubmit, requiredFields, cities } = props
   const [fields, setFields] = useState<Attribute[]>([])
 
   const router = useRouter()
@@ -119,14 +121,14 @@ export default function NewPostForm(props: CreatePostProps) {
         onChange={handleChange}
       />
       <div className="border-b w-full my-4" />
-      {/* <SelectField
-        key={`category${getVal("category")}`}
-        label={"Category"}
-        value={getVal("category")}
-        options={categories}
-        onChange={handleChange}
-        url="categories"
-      /> */}
+      <SelectField
+        key={`city_${getVal("city")}`}
+        label={"City"}
+        value={getVal("city")}
+        options={cities}
+        onChange={({ slug }) => handleChange("city", slug)}
+        url=""
+      />
       <TextField
         key={"title" + getVal("category")}
         value={getVal("title")}
