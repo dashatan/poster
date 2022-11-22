@@ -1,13 +1,14 @@
 import Category from "./Category"
 
 interface Post {
+  _id: string
+  userId: string
+  cityId: string
+  categoryId: string
+  category: Category
   title: string
   description: string
-  categoryId: string
-  cityId: string
-  userId: string
   images: string[]
-  category: Category
   attributes: { key: string; value: string }[]
 }
 

@@ -101,7 +101,7 @@ export default function SelectiveList(props: SelectiveListProps) {
 
   return (
     <FullScreenModal heading={getHeading()} onBackBtnClick={handleBackBtn}>
-      <ul className="overflow-y-auto h-full hide-scrollbar" ref={ref}>
+      <ul className="overflow-y-auto h-full hide-scrollbar px-6 py-2" ref={ref}>
         {props.withSearch && (
           <SearchField value={searchTerm} onChange={handleSearch} placeHolder="search" />
         )}

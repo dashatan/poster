@@ -45,14 +45,11 @@ export const API = createApi({
         return response.data.posts
       },
     }),
-    createPost: builder.mutation<{}, { body: PostObject }>({
-      queryFn: async ({ body }) => {
-        const options = {
-          url: baseUrl + "/post",
-          method: "POST",
-          data: body,
-        }
-        return await axios(options)
+    createPost: builder.mutation<Post, { data: PostObject }>({
+      queryFn: async ({ data }) => {
+        const api = baseUrl + "/post"
+        return await axios
+          .post(api, data)
           .then((res) => ({ data: res.data }))
           .catch((err) => ({ error: err.response.data }))
       },
@@ -65,7 +62,7 @@ export const API = createApi({
         return await axios
           .post(api, data, { onUploadProgress })
           .then((res) => ({ data: res.data }))
-          .catch((err) => ({ error: err.message }))
+          .catch((err) => ({ error: err.response.data }))
       },
     }),
     removeTmpFile: builder.mutation<{ success: boolean; message: string }, string>({

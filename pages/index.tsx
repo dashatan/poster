@@ -1,5 +1,4 @@
 import type { NextPage } from "next"
-import { categories } from "../utils/static/categories"
 import { posts } from "../utils/static/posts"
 import PhoneLayout from "../components/layouts/PhoneLayout"
 import Home from "../components/templates/phone/Home"

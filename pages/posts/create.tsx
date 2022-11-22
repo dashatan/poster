@@ -38,7 +38,7 @@ export default function Create(): JSX.Element {
   function handleSubmit() {
     const exceptions = ["category", "title", "description", "images", "city"]
     const attributes = formData.filter((x) => !exceptions.includes(x.key))
-    const args = {
+    const data = {
       userId: "63793f2ae6c0220d9c076717",
       cityId: getVal("city"),
       categoryId: getVal("category"),
@@ -47,14 +47,14 @@ export default function Create(): JSX.Element {
       images: getVal("images").split(","),
       attributes,
     }
-    createPost({ body: args })
+    createPost({ data })
       .then((res) => console.log(res))
       .catch((err) => console.log(err))
   }
 
   return (
-    <div className="h-screen w-screen">
-      <FullScreenModal heading="Add New Post">
+    <FullScreenModal heading="Add New Post">
+      <div className="overflow-y-auto h-full hide-scrollbar px-6 py-2">
         {(categories.isLoading || cities.isLoading || !lsChecked) && (
           <div className="flex flex-col justify-center items-center h-10 mt-4">
             <Spinner />
@@ -77,7 +77,7 @@ export default function Create(): JSX.Element {
             requiredFields={required}
           />
         )}
-      </FullScreenModal>
-    </div>
+      </div>
+    </FullScreenModal>
   )
 }

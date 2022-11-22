@@ -1,7 +1,7 @@
 export interface T {
   [key: string]: string
 }
-export type HeroIcon = (props: React.ComponentProps<"svg">) => JSX.Element
+export type Icon = (props: React.ComponentProps<"svg">) => JSX.Element
 
 export interface Filters {
   [x: string]: string
