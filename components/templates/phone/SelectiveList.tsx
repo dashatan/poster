@@ -4,7 +4,7 @@ import ViewportList from "react-viewport-list"
 import Fuse from "fuse.js"
 import ListItemCard from "../../molecules/cards/ListItemCard"
 import SearchField from "../../molecules/inputs/SearchField"
-import FullScreenModal from "./FullScreenModal"
+import FullScreenModal from "../../layouts/FullScreenModal"
 
 export interface ListItem {
   title: string

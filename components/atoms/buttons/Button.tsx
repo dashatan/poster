@@ -1,13 +1,17 @@
+import { Icon } from "../../../utils/types"
+
 export interface ButtonProps {
   label: string
-  color: "blue" | "red" | "green"
+  Icon?: Icon
+  color: "blue" | "red" | "green" | "none"
   onClick?: () => void
 }
-export default function Button({ label, color, onClick }: ButtonProps) {
+export default function Button({ label, Icon, color, onClick }: ButtonProps) {
   const bgColors = {
     blue: "bg-blue-4",
     green: "bg-green-4",
     red: "bg-red-4",
+    none: "",
   }
   const bgColor = bgColors[color]
   const classes = [
@@ -20,13 +24,19 @@ export default function Button({ label, color, onClick }: ButtonProps) {
     "border-dark-6",
     "rounded-lg",
     "flex",
-    "justify-around",
+    "justify-center",
     "items-center",
+    "gap-2",
   ].join(" ")
 
   return (
     <div className={classes + ""} onClick={onClick}>
-      {label}
+      {Icon && (
+        <div>
+          <Icon className="w-6 h-6" />
+        </div>
+      )}
+      <div>{label}</div>
     </div>
   )
 }

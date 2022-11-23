@@ -3,12 +3,13 @@ import { posts } from "../utils/static/posts"
 import PhoneLayout from "../components/layouts/PhoneLayout"
 import Home from "../components/templates/phone/Home"
 import { useRouter } from "next/router"
-import { useAppSelector } from "../utils/hooks"
+import { useAppDispatch, useAppSelector } from "../utils/hooks"
 import { RootState } from "../utils/store"
 import { useCategoriesQuery } from "../utils/slices/api"
 
 const HomePage: NextPage = () => {
   const router = useRouter()
+
   const search = useAppSelector((state: RootState) => state.search)
   const { data } = useCategoriesQuery()
 

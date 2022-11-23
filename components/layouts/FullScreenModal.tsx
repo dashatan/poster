@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
-import { beautifyWord } from "../../molecules/cards/FormFieldCard"
-import PhoneTopHeader from "../../organisms/headers/PhoneTopHeader"
+import { beautifyWord } from "../molecules/cards/FormFieldCard"
+import PhoneTopHeader from "../organisms/headers/PhoneTopHeader"
 
 export interface FullScreenModalProps {
   heading: string

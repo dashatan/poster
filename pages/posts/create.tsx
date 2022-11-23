@@ -10,7 +10,7 @@ import {
 import { post } from "../../utils/slices/formData"
 import Spinner from "../../components/atoms/Spinner"
 import NewPostForm from "../../components/templates/phone/NewPostForm"
-import FullScreenModal from "../../components/templates/phone/FullScreenModal"
+import FullScreenModal from "../../components/layouts/FullScreenModal"
 import { KeyValueObj } from "../../utils/types"
 
 export default function Create(): JSX.Element {
