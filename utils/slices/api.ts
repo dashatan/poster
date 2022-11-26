@@ -24,7 +24,7 @@ export const API = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl }),
   endpoints: (builder) => ({
-    // staticAPIs
+    // static
     categories: builder.query<Category[], void>({
       query: categoriesQuery,
       transformResponse: (response: { data: { categories: Category[] } }) => {
@@ -38,7 +38,12 @@ export const API = createApi({
       },
     }),
 
-    // postAPIs
+    //Auth
+    login: builder.mutation<{}, FormData>({
+      query: (body) => ({ url: "/login", method: "POST", body }),
+    }),
+
+    // posts
     posts: builder.query<Post[], void>({
       query: postsQuery,
       transformResponse: (response: { data: { posts: Post[] } }) => {
@@ -55,7 +60,7 @@ export const API = createApi({
       },
     }),
 
-    // fileAPIs
+    // files
     uploadTmpFile: builder.mutation<string, UploadTmpArgs>({
       queryFn: async ({ data, onUploadProgress }) => {
         const api = baseUrl + "/file/upload/tmp"
@@ -77,10 +82,18 @@ export const API = createApi({
 })
 
 export const {
+  //static
   useCategoriesQuery,
   useCitiesQuery,
+
+  //auth
+  useLoginMutation,
+
+  //posts
   usePostsQuery,
   useCreatePostMutation,
+
+  //files
   useUploadTmpFileMutation,
   useRemoveTmpFileMutation,
 } = API

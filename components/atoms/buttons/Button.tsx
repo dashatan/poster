@@ -21,7 +21,9 @@ export default function Button({ label, Icon, color, onClick }: ButtonProps) {
     "border-2",
     bgColor,
     "text-dark-8",
+    color === "none" ? "dark:text-dark-4" : "",
     "border-dark-6",
+    color === "none" ? "dark:border-dark-4" : "",
     "rounded-lg",
     "flex",
     "justify-center",
@@ -31,11 +33,7 @@ export default function Button({ label, Icon, color, onClick }: ButtonProps) {
 
   return (
     <div className={classes + ""} onClick={onClick}>
-      {Icon && (
-        <div>
-          <Icon className="w-6 h-6" />
-        </div>
-      )}
+      {Icon && <Icon className="w-6 h-6" />}
       <div>{label}</div>
     </div>
   )

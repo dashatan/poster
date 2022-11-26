@@ -10,10 +10,7 @@ export default function Info({ variant, text }: InfoProps) {
   if (variant === "success") bg = "bg-green-3"
   return (
     <div
-      className={
-        "text-sm text-dark-8 dark:text-dark-4 flex items-center gap-2 rounded-lg p-2 my-2 " +
-        bg
-      }
+      className={"text-sm text-dark-8 flex items-center gap-2 rounded-lg p-2 my-2 " + bg}
     >
       <ExclamationCircleIcon className="w-6" /> {text}
     </div>

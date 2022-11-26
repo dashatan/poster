@@ -1,18 +1,14 @@
-import { HeroIcon } from "../../templates/phone/Home"
+import { Icon } from "../../../utils/types"
 
 export interface IconCardProps {
-    Icon: HeroIcon;
-    title: string;
-    onClick?: () => void;
+  Icon: Icon
+  title: string
+  onClick?: () => void
 }
 
 const NavButton = ({ Icon, title, onClick }: IconCardProps) => {
-    
   return (
-    <div
-      onClick={onClick}
-      className="flex flex-col items-center  gap-1 w-11"
-    >
+    <div onClick={onClick} className="flex flex-col items-center  gap-1 w-11">
       <div className="flex items-center justify-center">
         <Icon className="w-5 h-5 text-dark-6 dark:text-dark-4" />
       </div>
