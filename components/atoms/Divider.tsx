@@ -1,2 +1,4 @@
-const Divider = () => <div className="border-t border-light-4 my-2" />
+const Divider = ({ space }: { space: string }) => {
+  return <div className={`border-t border-light-4 my-${space}`} />
+}
 export default Divider

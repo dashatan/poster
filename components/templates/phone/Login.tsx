@@ -7,10 +7,11 @@ import { FcGoogle } from "react-icons/fc"
 import TextButton from "../../atoms/buttons/TextButton"
 import Divider from "../../atoms/Divider"
 import Info from "../../molecules/alerts/Info"
-import validateEmail from "../../../utils/customHooks/validateEmail"
 import { useAppDispatch, useAppSelector } from "../../../utils/hooks"
 import { login } from "../../../utils/slices/formData"
 import { useLoginMutation } from "../../../utils/slices/api"
+import { z } from "zod"
+import { KeyValueObj } from "../../../utils/types"
 
 export interface LoginProps {}
 
@@ -22,24 +23,27 @@ export default function Login(props: LoginProps) {
   const [formData, setFormData] = useState({
     email: loginFd.email,
     password: loginFd.password,
-    error: "",
   })
-  const { error, email, password } = formData
+  const [errors, setErrors] = useState<KeyValueObj[]>([])
+  const { email, password } = formData
+
+  const LoginSchema = z.object({
+    email: z.string().email("Email is not valid"),
+    password: z.string().min(6, "Password must contain at least 6 characters"),
+  })
 
   async function submit() {
-    if (email === "" || password === "") {
-      handleFd("error", "Email and Password is required")
+    const validation = LoginSchema.safeParse(formData)
+    if (!validation.success) {
+      setErrors(
+        validation.error.issues.map((x) => ({
+          key: x.path[0].toString(),
+          value: x.message,
+        }))
+      )
       return
     }
-    if (!validateEmail(email)) {
-      handleFd("error", "Email is not correct")
-      return
-    }
-    if (password.length < 6) {
-      handleFd("error", "Password should be more than 6 characters")
-      return
-    }
-    handleFd("error", "")
+    setErrors([])
     const fd = new FormData()
     fd.append("email", email)
     fd.append("password", password)
@@ -58,27 +62,40 @@ export default function Login(props: LoginProps) {
 
   return (
     <FullScreenModal heading="Sign in">
-      <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start gap-4">
+      <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start">
         <Button color="none" label="Sign in with Google" Icon={FcGoogle} />
-        <Divider />
-        <div>
-          <div>
-            <TextField label="Email" value={email} onChange={handleFd} />
-          </div>
-          <div>
-            <TextField label="password" value={password} onChange={handleFd} />
+        <Divider space="4" />
+        <div className="mb-6">
+          <TextField label="Email" value={email} onChange={handleFd} />
+          {errors.map(
+            (x) =>
+              x.key === "email" && (
+                <div className="-mt-4">
+                  <Info text={x.value} variant="error" />
+                </div>
+              )
+          )}
+
+          <TextField
+            type="password"
+            label="password"
+            value={password}
+            onChange={handleFd}
+          />
+          <div className="-mt-2">
             <TextButton label="Forgot Password?" color="blue" />
           </div>
+          {errors.map(
+            (x) => x.key === "password" && <Info text={x.value} variant="error" />
+          )}
         </div>
         <Button color="blue" label="Sign in" onClick={submit} />
-        {!!error && <Info text={error} variant="error" />}
-        <Divider />
+        <Divider space="4" />
         <div>
           <div className="text-center">
             {"Don't have an account?"}
             <TextButton
               label="Sign up"
-              color="blue"
               onClick={() => router.replace("/profile/sign-up")}
             />
           </div>

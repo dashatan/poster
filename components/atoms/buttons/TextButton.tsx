@@ -3,7 +3,7 @@ import { Icon } from "../../../utils/types"
 export interface TextButtonProps {
   label: string
   Icon?: Icon
-  color: "blue" | "red" | "green" | "none"
+  color?: "blue" | "red" | "green" | "none"
   onClick?: () => void
 }
 export default function TextButton({ label, Icon, color, onClick }: TextButtonProps) {
@@ -13,8 +13,8 @@ export default function TextButton({ label, Icon, color, onClick }: TextButtonPr
     red: "text-red-6 dark:text-red-4",
     none: "",
   }
-  const textColor = textColors[color]
-  const classes = [textColor, "flex", "justify-center", "items-center", "gap-2"].join(" ")
+  const textColor = color ? textColors[color] : textColors.blue
+  const classes = [textColor].join(" ")
 
   return (
     <div className={classes + ""} onClick={onClick}>
