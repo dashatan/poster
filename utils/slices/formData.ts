@@ -1,9 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { KeyValueObj } from "../types"
 
+export interface LoginFormData {
+  email: string
+  password: string
+}
+export interface SignupFormData {
+  name: string
+  email: string
+  password: string
+}
 export interface FormDataSliceInterface {
-  post: { key: string; value: string }[]
-  login: { email: string; password: string }
-  signUp: { name: string; email: string; password: string }
+  post: KeyValueObj[]
+  login: LoginFormData
+  signUp: SignupFormData
 }
 
 export const initialState: FormDataSliceInterface = {

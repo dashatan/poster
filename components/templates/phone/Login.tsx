@@ -8,56 +8,32 @@ import TextButton from "../../atoms/buttons/TextButton"
 import Divider from "../../atoms/Divider"
 import Info from "../../molecules/alerts/Info"
 import { useAppDispatch, useAppSelector } from "../../../utils/hooks"
-import { login } from "../../../utils/slices/formData"
-import { useLoginMutation } from "../../../utils/slices/api"
-import { z } from "zod"
+import { login, LoginFormData } from "../../../utils/slices/formData"
 import { KeyValueObj } from "../../../utils/types"
 
-export interface LoginProps {}
+export interface LoginProps {
+  onSubmit: (formData: LoginFormData) => void
+  errors: KeyValueObj[]
+}
 
-export default function Login(props: LoginProps) {
+export default function Login({ errors, onSubmit }: LoginProps) {
   const router = useRouter()
   const loginFd = useAppSelector((state) => state.formData.login)
   const dispatch = useAppDispatch()
-  const [send] = useLoginMutation()
-  const [formData, setFormData] = useState({
-    email: loginFd.email,
-    password: loginFd.password,
-  })
-  const [errors, setErrors] = useState<KeyValueObj[]>([])
+  const [formData, setFormData] = useState(loginFd)
+
   const { email, password } = formData
-
-  const LoginSchema = z.object({
-    email: z.string().email("Email is not valid"),
-    password: z.string().min(6, "Password must contain at least 6 characters"),
-  })
-
-  async function submit() {
-    const validation = LoginSchema.safeParse(formData)
-    if (!validation.success) {
-      setErrors(
-        validation.error.issues.map((x) => ({
-          key: x.path[0].toString(),
-          value: x.message,
-        }))
-      )
-      return
-    }
-    setErrors([])
-    const fd = new FormData()
-    fd.append("email", email)
-    fd.append("password", password)
-    try {
-      const res = await send(fd)
-      console.log(res)
-    } catch (err) {
-      console.log(err)
-    }
-  }
 
   function handleFd(key: string, value: string) {
     setFormData((fd) => ({ ...fd, [key.toLowerCase()]: value }))
     dispatch(login({ ...formData, [key.toLowerCase()]: value }))
+  }
+
+  const errOf = (key: string) => {
+    console.log(errors)
+    const error = errors.find((x) => x.key === key)
+    if (!error) return ""
+    return error.value
   }
 
   return (
@@ -67,15 +43,11 @@ export default function Login(props: LoginProps) {
         <Divider space="4" />
         <div className="mb-6">
           <TextField label="Email" value={email} onChange={handleFd} />
-          {errors.map(
-            (x) =>
-              x.key === "email" && (
-                <div className="-mt-4">
-                  <Info text={x.value} variant="error" />
-                </div>
-              )
-          )}
-
+          {/* {!!errOf("email") && (
+            <div className="-mt-4">
+              <Info text={errOf("email")} variant="error" />
+            </div>
+          )} */}
           <TextField
             type="password"
             label="password"
@@ -85,11 +57,10 @@ export default function Login(props: LoginProps) {
           <div className="-mt-2">
             <TextButton label="Forgot Password?" color="blue" />
           </div>
-          {errors.map(
-            (x) => x.key === "password" && <Info text={x.value} variant="error" />
-          )}
+          {/* {!!errOf("password") && <Info text={errOf("password")} variant="error" />} */}
         </div>
-        <Button color="blue" label="Sign in" onClick={submit} />
+        <Button color="blue" label="Sign in" onClick={() => onSubmit(formData)} />
+        {!!errOf("form") && <Info text={errOf("form")} variant="error" />}
         <Divider space="4" />
         <div>
           <div className="text-center">

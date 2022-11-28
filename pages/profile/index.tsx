@@ -9,16 +9,16 @@ import {
 } from "@heroicons/react/24/outline"
 import { useContext } from "react"
 import FullScreenLoading from "../../components/layouts/FullScreenLoading"
-import Login from "../../components/templates/phone/Login"
 import UserProfile, { LinkType } from "../../components/templates/phone/Profile"
 import LocalStorageContext from "../../utils/contexts/LocalStorageContext"
+import SignIn from "./signin"
 
 const Profile = () => {
   const ls = useContext(LocalStorageContext)
   const isLoggedIn = ls.isLoggedIn
 
   if (isLoggedIn === undefined) return <FullScreenLoading />
-  if (isLoggedIn === false) return <Login />
+  if (isLoggedIn === false) return <SignIn />
 
   const links: LinkType[] = [
     { title: "divider" },
