@@ -10,16 +10,13 @@ import useDarkMode from "./useDarkMode"
 
 export default function useNavItems() {
   const router = useRouter()
-  const setDarkMode = useDarkMode
+  const darkMode = useDarkMode()
 
   const route = (url: string) => {
     router.push(url)
   }
 
-  function handleDarkMode() {
-    const darkMode = window.localStorage.getItem("dark_mode")
-    if (darkMode !== null) setDarkMode(darkMode === "on" ? "off" : "on")
-  }
+  const handleDarkMode = () => darkMode.toggle()
 
   const navItems = [
     {

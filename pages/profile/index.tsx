@@ -7,15 +7,18 @@ import {
   PhotoIcon,
   PowerIcon,
 } from "@heroicons/react/24/outline"
-import { useContext } from "react"
 import FullScreenLoading from "../../components/layouts/FullScreenLoading"
 import UserProfile, { LinkType } from "../../components/templates/phone/Profile"
-import LocalStorageContext from "../../utils/contexts/LocalStorageContext"
+import useLocalStorage from "../../utils/customHooks/useLocalStorage"
+import useMobile from "../../utils/customHooks/useMobile"
 import SignIn from "./signin"
 
 const Profile = () => {
-  const ls = useContext(LocalStorageContext)
-  const isLoggedIn = ls.isLoggedIn
+  const { isLoggedIn } = useLocalStorage()
+  const isMobile = useMobile()
+
+  if (isMobile === undefined) return <></>
+  if (isMobile === false) return <div>desktop app</div>
 
   if (isLoggedIn === undefined) return <FullScreenLoading />
   if (isLoggedIn === false) return <SignIn />
@@ -31,7 +34,7 @@ const Profile = () => {
     { title: "Information", Icon: InformationCircleIcon, onClick: () => {} },
     { title: "Log Out", Icon: PowerIcon, onClick: () => {} },
   ]
-  return <UserProfile links={links} />
+  if (isMobile) return <UserProfile links={links} />
 }
 
 export default Profile

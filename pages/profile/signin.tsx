@@ -1,13 +1,21 @@
+import { useRouter } from "next/router"
 import { z } from "zod"
 import Login from "../../components/templates/phone/Login"
-import { KeyValueObj } from "../../utils/types"
+import { StringObj } from "../../utils/types"
 import { useState } from "react"
 import { useLoginMutation } from "../../utils/slices/api"
 import { LoginFormData } from "../../utils/slices/formData"
+import { isErrorWithData } from "../../utils/helpers"
 
 export default function SignIn() {
-  const [errors, setErrors] = useState<KeyValueObj[]>([])
+  const router = useRouter()
+  const [errors, setErrors] = useState<StringObj>({})
   const [send] = useLoginMutation()
+
+  const route = {
+    signup: () => router.replace("/profile/signup"),
+    forgot: () => router.replace("/profile/forgot"),
+  }
 
   const LoginSchema = z.object({
     email: z.string().email("Email is not valid"),
@@ -18,26 +26,32 @@ export default function SignIn() {
     const { email, password } = formData
     const validation = LoginSchema.safeParse(formData)
     if (!validation.success) {
-      setErrors(
-        validation.error.issues.map((x) => ({
-          key: x.path[0].toString(),
-          value: x.message,
-        }))
-      )
+      const errs: StringObj = {}
+      validation.error.issues.map((x) => (errs[x.path[0]] = x.message))
+      setErrors(errs)
       return
     }
-    setErrors([])
-    const fd = new FormData()
-    fd.append("email", email)
-    fd.append("password", password)
-    send({ data: fd }).then((res) => {
-      if ("data" in res) {
-        const userToken = res.data
-      } else {
-        const error: string = "data" in res.error ? res.error.data : ""
-        setErrors((errors) => [...errors, { key: "form", value: error }])
+    const { form: formErr } = errors
+    setErrors(formErr ? { form: formErr } : {})
+    const data = new FormData()
+    data.append("email", email)
+    data.append("password", password)
+    try {
+      const payload = await send({ data }).unwrap()
+      const userToken = payload
+    } catch (error) {
+      if (isErrorWithData(error)) {
+        const err: string = error.data
+        setErrors((errors) => ({ ...errors, form: err }))
       }
-    })
+    }
   }
-  return <Login errors={errors} onSubmit={submit} />
+  return (
+    <Login
+      errors={errors}
+      onSubmit={submit}
+      onSingUp={route.signup}
+      onForgot={route.forgot}
+    />
+  )
 }

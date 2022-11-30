@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import axios, { AxiosProgressEvent } from "axios"
 import { ListItem } from "../../components/templates/phone/SelectiveList"
-import createPost, { PostObject } from "../gqlMutations/createPost"
+import { PostObject } from "../gqlMutations/createPost"
 import categoriesQuery from "../gqlQueries/categoriesQuery"
 import citiesQuery from "../gqlQueries/citiesQuery"
 import postsQuery from "../gqlQueries/postsQuery"
@@ -11,11 +11,6 @@ import Post from "../types/Post"
 interface UploadTmpArgs {
   data: FormData
   onUploadProgress: (progressEvent: AxiosProgressEvent) => void
-}
-
-interface GqlMutationResponse {
-  data: {}
-  error: []
 }
 
 const baseUrl = "http://localhost:5000"
@@ -42,6 +37,9 @@ export const API = createApi({
     login: builder.mutation<string, { data: FormData }>({
       query: (body) => ({ url: "/auth/login", method: "POST", body }),
     }),
+    signup: builder.mutation<string, { data: FormData }>({
+      query: (body) => ({ url: "/auth/signup", method: "POST", body }),
+    }),
 
     // posts
     posts: builder.query<Post[], void>({
@@ -56,7 +54,7 @@ export const API = createApi({
         return await axios
           .post(api, data)
           .then((res) => ({ data: res.data }))
-          .catch((err) => ({ error: err.response.data }))
+          .catch((err) => ({ error: err.response }))
       },
     }),
 
@@ -88,6 +86,7 @@ export const {
 
   //auth
   useLoginMutation,
+  useSignupMutation,
 
   //posts
   usePostsQuery,

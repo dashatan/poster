@@ -1,6 +1,6 @@
 import { createContext } from "react"
 
-const initialLs: LsType = {
+export const initialLs: LsType = {
   isLoggedIn: undefined,
   userToken: undefined,
 }

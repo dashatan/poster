@@ -9,6 +9,7 @@ export interface SignupFormData {
   name: string
   email: string
   password: string
+  accept: boolean
 }
 export interface FormDataSliceInterface {
   post: KeyValueObj[]
@@ -26,7 +27,7 @@ export const initialState: FormDataSliceInterface = {
     { key: "images", value: "" },
   ],
   login: { email: "", password: "" },
-  signUp: { name: "", email: "", password: "" },
+  signUp: { name: "", email: "", password: "", accept: false },
 }
 
 export const FormData = createSlice({

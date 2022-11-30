@@ -2,31 +2,25 @@ import "../styles/globals.css"
 import type { AppProps } from "next/app"
 import { Provider } from "react-redux"
 import { store } from "../utils/store"
-import { useEffect, useState } from "react"
-import setDarkMode from "../utils/customHooks/useDarkMode"
-import LocalStorageContext from "../utils/contexts/LocalStorageContext"
+import useDarkMode from "../utils/customHooks/useDarkMode"
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const [ls, setLs] = useState({})
+export default function MyApp({ Component, pageProps }: AppProps) {
+  useDarkMode()
 
-  useEffect(() => {
-    //dark mode
-    const darkMode = localStorage.getItem("dark_mode")
-    if (darkMode !== null) setDarkMode(darkMode)
-    else localStorage.setItem("dark_mode", "off")
-
-    // userToken through context
-    const userToken = window.localStorage.getItem("userToken")
-    const isLoggedIn = userToken ? true : false
-    setLs((ls) => ({ ...ls, userToken, isLoggedIn }))
-  }, [])
   return (
     <Provider store={store}>
-      <LocalStorageContext.Provider value={ls}>
-        <Component {...pageProps} />
-      </LocalStorageContext.Provider>
+      <Component {...pageProps} />
     </Provider>
   )
 }
 
-export default MyApp
+// export async function getServerSideProps(context: {
+//   req: { headers: { [x: string]: any } }
+// }) {
+//   const UA = context.req.headers["user-agent"]
+//   const isMobile = Boolean(
+//     UA.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i)
+//   )
+
+//   return { props: { isMobile } }
+// }
