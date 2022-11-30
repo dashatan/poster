@@ -1,4 +1,4 @@
-import { KeyValueObj } from "../types"
+import { KeyValueObj } from "../../types"
 
 export interface PostObject {
   userId: string

@@ -1,9 +1,7 @@
 import { useRouter } from "next/router"
-import { useCategoriesQuery } from "../../utils/slices/api"
 import Spinner from "../../components/atoms/Spinner"
-import SelectiveList, {
-  ListItem,
-} from "../../components/templates/phone/SelectiveList"
+import SelectiveList, { ListItem } from "../../components/templates/phone/SelectiveList"
+import { useCategoriesQuery } from "../../utils/services/statics"
 
 export default function Categories() {
   const router = useRouter()

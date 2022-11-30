@@ -5,7 +5,7 @@ import Home from "../components/templates/phone/Home"
 import { useRouter } from "next/router"
 import { useAppDispatch, useAppSelector } from "../utils/hooks"
 import { RootState } from "../utils/store"
-import { useCategoriesQuery } from "../utils/slices/api"
+import { useCategoriesQuery } from "../utils/services/statics"
 
 const HomePage: NextPage = () => {
   const router = useRouter()

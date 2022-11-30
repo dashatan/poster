@@ -7,21 +7,24 @@ import {
   PhotoIcon,
   PowerIcon,
 } from "@heroicons/react/24/outline"
+import { useRouter } from "next/router"
 import FullScreenLoading from "../../components/layouts/FullScreenLoading"
 import UserProfile, { LinkType } from "../../components/templates/phone/Profile"
 import useLocalStorage from "../../utils/customHooks/useLocalStorage"
 import useMobile from "../../utils/customHooks/useMobile"
-import SignIn from "./signin"
 
 const Profile = () => {
+  const router = useRouter()
   const { isLoggedIn } = useLocalStorage()
   const isMobile = useMobile()
-
-  if (isMobile === undefined) return <></>
+  if (isMobile === undefined) return <FullScreenLoading />
   if (isMobile === false) return <div>desktop app</div>
 
   if (isLoggedIn === undefined) return <FullScreenLoading />
-  if (isLoggedIn === false) return <SignIn />
+  if (isLoggedIn === false) {
+    router.replace("/profile/signin")
+    return <FullScreenLoading />
+  }
 
   const links: LinkType[] = [
     { title: "divider" },
@@ -34,7 +37,7 @@ const Profile = () => {
     { title: "Information", Icon: InformationCircleIcon, onClick: () => {} },
     { title: "Log Out", Icon: PowerIcon, onClick: () => {} },
   ]
-  if (isMobile) return <UserProfile links={links} />
+  return <UserProfile links={links} />
 }
 
 export default Profile

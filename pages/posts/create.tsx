@@ -2,24 +2,21 @@
 import { XCircleIcon } from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../utils/hooks"
-import {
-  useCategoriesQuery,
-  useCitiesQuery,
-  useCreatePostMutation,
-} from "../../utils/slices/api"
 import { post } from "../../utils/slices/formData"
 import Spinner from "../../components/atoms/Spinner"
 import NewPostForm from "../../components/templates/phone/NewPostForm"
 import FullScreenModal from "../../components/layouts/FullScreenModal"
 import { KeyValueObj } from "../../utils/types"
+import { useCreatePostMutation } from "../../utils/services/posts"
+import { useCategoriesQuery, useCitiesQuery } from "../../utils/services/statics"
 
-export default function Create(): JSX.Element {
+export default function Create() {
   const [lsChecked, setLsChecked] = useState(false)
   const dispatch = useAppDispatch()
   const formData = useAppSelector((state) => state.formData.post)
   const categories = useCategoriesQuery()
   const cities = useCitiesQuery()
-  const [createPost, postRes] = useCreatePostMutation()
+  const [createPost] = useCreatePostMutation()
   const required = ["category", "title", "description", "images", "city"]
 
   useEffect(() => {
@@ -35,9 +32,10 @@ export default function Create(): JSX.Element {
 
   const getVal = (key: string) => formData.find((x) => x.key === key)?.value || ""
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const exceptions = ["category", "title", "description", "images", "city"]
     const attributes = formData.filter((x) => !exceptions.includes(x.key))
+
     const data = {
       userId: "63793f2ae6c0220d9c076717",
       cityId: getVal("city"),
@@ -47,9 +45,13 @@ export default function Create(): JSX.Element {
       images: getVal("images").split(","),
       attributes,
     }
-    createPost({ data })
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err))
+
+    try {
+      const payload = await createPost(data).unwrap()
+      console.log(payload)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (

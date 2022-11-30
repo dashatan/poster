@@ -1,20 +1,31 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/dist/query"
-import { API } from "./slices/api"
-import { authSlice } from "./slices/auth"
-import { darkModeSlice } from "./slices/darkMode"
+import { auth } from "./services/auth"
+import { files } from "./services/files"
+import { posts } from "./services/posts"
+import { statics } from "./services/statics"
 import { FormData } from "./slices/formData"
 import { SearchSlice } from "./slices/search"
 
 export const store = configureStore({
   reducer: {
-    [darkModeSlice.name]: darkModeSlice.reducer,
+    //slices
     [SearchSlice.name]: SearchSlice.reducer,
     [FormData.name]: FormData.reducer,
-    [authSlice.name]: authSlice.reducer,
-    [API.reducerPath]: API.reducer,
+
+    //services
+    [auth.reducerPath]: auth.reducer,
+    [posts.reducerPath]: posts.reducer,
+    [statics.reducerPath]: statics.reducer,
+    [files.reducerPath]: files.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(API.middleware),
+
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware()
+      .concat(auth.middleware)
+      .concat(posts.middleware)
+      .concat(files.middleware)
+      .concat(statics.middleware),
 })
 
 setupListeners(store.dispatch)

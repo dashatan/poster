@@ -3,18 +3,29 @@ import { z } from "zod"
 import Login from "../../components/templates/phone/Login"
 import { StringObj } from "../../utils/types"
 import { useState } from "react"
-import { useLoginMutation } from "../../utils/slices/api"
 import { LoginFormData } from "../../utils/slices/formData"
 import { isErrorWithData } from "../../utils/helpers"
+import { useLoginMutation } from "../../utils/services/auth"
+import useLocalStorage from "../../utils/customHooks/useLocalStorage"
+import FullScreenLoading from "../../components/layouts/FullScreenLoading"
 
 export default function SignIn() {
   const router = useRouter()
+  const ls = useLocalStorage()
   const [errors, setErrors] = useState<StringObj>({})
   const [send] = useLoginMutation()
+
+  const { isLoggedIn } = ls
+  if (isLoggedIn === undefined) return <FullScreenLoading />
+  if (isLoggedIn === true) {
+    router.replace("/profile")
+    return <FullScreenLoading />
+  }
 
   const route = {
     signup: () => router.replace("/profile/signup"),
     forgot: () => router.replace("/profile/forgot"),
+    profile: () => router.replace("/profile"),
   }
 
   const LoginSchema = z.object({
@@ -33,12 +44,12 @@ export default function SignIn() {
     }
     const { form: formErr } = errors
     setErrors(formErr ? { form: formErr } : {})
-    const data = new FormData()
-    data.append("email", email)
-    data.append("password", password)
+    const data = { email, password }
     try {
-      const payload = await send({ data }).unwrap()
-      const userToken = payload
+      const payload = await send(data).unwrap()
+      console.log(payload)
+      ls.set.userToken(payload)
+      route.profile()
     } catch (error) {
       if (isErrorWithData(error)) {
         const err: string = error.data

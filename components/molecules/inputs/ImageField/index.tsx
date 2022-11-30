@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useMemo, useState } from "react"
 import {
   useRemoveTmpFileMutation,
   useUploadTmpFileMutation,
-} from "../../../../utils/slices/api"
+} from "../../../../utils/services/files"
 import Info from "../../alerts/Info"
 import ImageCard from "./ImageCard"
 import ImageContainer from "./ImageContainer"
