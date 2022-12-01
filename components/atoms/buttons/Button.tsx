@@ -1,19 +1,23 @@
 import { Icon } from "../../../utils/types"
+import Spinner from "../Spinner"
 
 export interface ButtonProps {
   label: string
   Icon?: Icon
   color: "blue" | "red" | "green" | "none"
   onClick?: () => void
+  loading?: boolean
 }
-export default function Button({ label, Icon, color, onClick }: ButtonProps) {
+export default function Button({ label, Icon, color, onClick, loading }: ButtonProps) {
   const bgColors = {
     blue: "bg-blue-4",
     green: "bg-green-4",
     red: "bg-red-4",
     none: "",
   }
+
   const bgColor = bgColors[color]
+
   const classes = [
     "w-full",
     "h-10",
@@ -30,6 +34,15 @@ export default function Button({ label, Icon, color, onClick }: ButtonProps) {
     "items-center",
     "gap-2",
   ].join(" ")
+
+  if (loading)
+    return (
+      <div className={classes}>
+        <div className="w-6 h-6">
+          <Spinner />
+        </div>
+      </div>
+    )
 
   return (
     <div className={classes + ""} onClick={onClick}>

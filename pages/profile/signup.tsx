@@ -1,7 +1,6 @@
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { z } from "zod"
-import FullScreenLoading from "../../components/layouts/FullScreenLoading"
 import SignUp from "../../components/templates/phone/SignUp"
 import useLocalStorage from "../../utils/customHooks/useLocalStorage"
 import { isErrorWithData } from "../../utils/helpers"
@@ -16,13 +15,18 @@ export default function SignUpPage(props: SignUpProps) {
   const ls = useLocalStorage()
   const [errors, setErrors] = useState<StringObj>({})
   const [signup] = useSignupMutation()
+  const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState(false)
 
-  const { isLoggedIn } = ls
-  if (isLoggedIn === undefined) return <FullScreenLoading />
-  if (isLoggedIn === true) {
-    router.replace("/profile")
-    return <FullScreenLoading />
+  useEffect(() => setLoading(false), [])
+
+  const route = {
+    signin: () => router.replace("/profile/signin"),
+    privacy: () => router.replace("/profile/privacy"),
+    terms: () => router.replace("/profile/terms"),
+    profile: () => router.replace("/profile"),
   }
+  if (ls.isLoggedIn === true) route.profile()
 
   const LoginSchema = z.object({
     name: z.string().min(3, "Name must contain at least 3 characters"),
@@ -31,14 +35,8 @@ export default function SignUpPage(props: SignUpProps) {
     accept: z.literal(true),
   })
 
-  const route = {
-    signin: () => router.replace("/profile/signin"),
-    privacy: () => router.replace("/profile/privacy"),
-    terms: () => router.replace("/profile/terms"),
-    profile: () => router.replace("/profile"),
-  }
-
   async function submit(formData: SignupFormData) {
+    setSending(true)
     const { email, password, name } = formData
     const validation = LoginSchema.safeParse(formData)
     if (!validation.success) {
@@ -60,6 +58,7 @@ export default function SignUpPage(props: SignUpProps) {
         setErrors((errors) => ({ ...errors, form: err }))
       }
     }
+    setSending(false)
   }
   return (
     <SignUp
@@ -68,6 +67,8 @@ export default function SignUpPage(props: SignUpProps) {
       onPrivacy={route.privacy}
       onTerms={route.terms}
       onSubmit={submit}
+      loading={loading}
+      sending={sending}
     />
   )
 }

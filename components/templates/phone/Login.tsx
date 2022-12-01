@@ -8,15 +8,19 @@ import Info from "../../molecules/alerts/Info"
 import { useAppDispatch, useAppSelector } from "../../../utils/hooks"
 import { login, LoginFormData } from "../../../utils/slices/formData"
 import { StringObj } from "../../../utils/types"
+import FullScreenLoading from "../../layouts/FullScreenLoading"
 
 export interface LoginProps {
   onSubmit: (formData: LoginFormData) => void
   onSingUp: () => void
   onForgot: () => void
   errors: StringObj
+  loading: boolean
+  sending: boolean
 }
 
-export default function Login({ errors, onSubmit, onSingUp, onForgot }: LoginProps) {
+export default function Login(props: LoginProps) {
+  const { errors, onSubmit, onSingUp, onForgot, loading, sending } = props
   const formData = useAppSelector((state) => state.formData.login)
   const dispatch = useAppDispatch()
 
@@ -26,6 +30,8 @@ export default function Login({ errors, onSubmit, onSingUp, onForgot }: LoginPro
   function handleFd(key: string, value: string) {
     dispatch(login({ ...formData, [key.toLowerCase()]: value }))
   }
+
+  if (loading) return <FullScreenLoading />
 
   return (
     <FullScreenModal heading="Sign in">
@@ -45,7 +51,12 @@ export default function Login({ errors, onSubmit, onSingUp, onForgot }: LoginPro
             <TextButton label="Forgot Password?" onClick={onForgot} />
           </div>
         </div>
-        <Button color="blue" label="Sign in" onClick={() => onSubmit(formData)} />
+        <Button
+          color="blue"
+          label="Sign in"
+          onClick={() => onSubmit(formData)}
+          loading={sending}
+        />
         {!!formErr && <Info text={formErr} variant="error" />}
         <Divider space="4" />
         <div>

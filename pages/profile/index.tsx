@@ -8,29 +8,40 @@ import {
   PowerIcon,
 } from "@heroicons/react/24/outline"
 import { useRouter } from "next/router"
-import FullScreenLoading from "../../components/layouts/FullScreenLoading"
+import { useEffect, useState } from "react"
 import UserProfile, { LinkType } from "../../components/templates/phone/Profile"
 import useLocalStorage from "../../utils/customHooks/useLocalStorage"
 import useMobile from "../../utils/customHooks/useMobile"
+import { useLazyUserQuery, User } from "../../utils/services/auth"
 
 const Profile = () => {
   const router = useRouter()
-  const { isLoggedIn, remove } = useLocalStorage()
+  const { isLoggedIn, remove, userToken } = useLocalStorage()
   const isMobile = useMobile()
+  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<User>()
+  const [userTrigger] = useLazyUserQuery()
+
+  useEffect(() => {
+    if (typeof userToken !== "string") return
+    async function getUser(userToken: string) {
+      try {
+        const data = await userTrigger(userToken, true).unwrap()
+        setUser(data)
+        setLoading(false)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getUser(userToken)
+  }, [userToken])
 
   const route = {
     signin: () => router.replace("/profile/signin"),
     profile: () => router.replace("/profile"),
   }
 
-  if (isMobile === undefined) return <FullScreenLoading />
-  if (isMobile === false) return <div>desktop app</div>
-
-  if (isLoggedIn === undefined) return <FullScreenLoading />
-  if (isLoggedIn === false) {
-    route.signin()
-    return <FullScreenLoading />
-  }
+  if (isLoggedIn === false) route.signin()
 
   function logOut() {
     remove("userToken")
@@ -48,7 +59,10 @@ const Profile = () => {
     { title: "Information", Icon: InformationCircleIcon, onClick: () => {} },
     { title: "Log Out", Icon: PowerIcon, onClick: logOut },
   ]
-  return <UserProfile links={links} />
+
+  if (isMobile === false) return <div>desktop app</div>
+
+  return <UserProfile links={links} loading={loading} user={user} />
 }
 
 export default Profile

@@ -2,25 +2,21 @@ import { useRouter } from "next/router"
 import { z } from "zod"
 import Login from "../../components/templates/phone/Login"
 import { StringObj } from "../../utils/types"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LoginFormData } from "../../utils/slices/formData"
 import { isErrorWithData } from "../../utils/helpers"
 import { useLoginMutation } from "../../utils/services/auth"
 import useLocalStorage from "../../utils/customHooks/useLocalStorage"
-import FullScreenLoading from "../../components/layouts/FullScreenLoading"
 
 export default function SignIn() {
   const router = useRouter()
   const ls = useLocalStorage()
   const [errors, setErrors] = useState<StringObj>({})
   const [send] = useLoginMutation()
+  const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState(false)
 
-  const { isLoggedIn } = ls
-  if (isLoggedIn === undefined) return <FullScreenLoading />
-  if (isLoggedIn === true) {
-    router.replace("/profile")
-    return <FullScreenLoading />
-  }
+  useEffect(() => setLoading(false), [])
 
   const route = {
     signup: () => router.replace("/profile/signup"),
@@ -28,12 +24,15 @@ export default function SignIn() {
     profile: () => router.replace("/profile"),
   }
 
+  if (ls.isLoggedIn === true) route.profile()
+
   const LoginSchema = z.object({
     email: z.string().email("Email is not valid"),
     password: z.string().min(6, "Password must contain at least 6 characters"),
   })
 
   async function submit(formData: LoginFormData) {
+    setSending(true)
     const { email, password } = formData
     const validation = LoginSchema.safeParse(formData)
     if (!validation.success) {
@@ -47,7 +46,6 @@ export default function SignIn() {
     const data = { email, password }
     try {
       const payload = await send(data).unwrap()
-      console.log(payload)
       ls.set.userToken(payload)
       route.profile()
     } catch (error) {
@@ -56,13 +54,17 @@ export default function SignIn() {
         setErrors((errors) => ({ ...errors, form: err }))
       }
     }
+    setSending(false)
   }
+
   return (
     <Login
       errors={errors}
       onSubmit={submit}
       onSingUp={route.signup}
       onForgot={route.forgot}
+      loading={loading}
+      sending={sending}
     />
   )
 }

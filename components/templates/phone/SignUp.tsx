@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../../utils/hooks"
 import TextButton from "../../atoms/buttons/TextButton"
 import Info from "../../molecules/alerts/Info"
 import CheckBoxSimple from "../../molecules/inputs/CheckBoxSimple"
+import FullScreenLoading from "../../layouts/FullScreenLoading"
 
 export interface SignUpProps {
   onSubmit: (formData: SignupFormData) => void
@@ -15,14 +16,11 @@ export interface SignUpProps {
   onTerms: () => void
   onPrivacy: () => void
   errors: StringObj
+  loading: boolean
+  sending: boolean
 }
-export default function SignUp({
-  errors,
-  onSingIn,
-  onSubmit,
-  onPrivacy,
-  onTerms,
-}: SignUpProps) {
+export default function SignUp(props: SignUpProps) {
+  const { errors, onSingIn, onSubmit, onPrivacy, onTerms, loading, sending } = props
   const formData = useAppSelector((state) => state.formData.signUp)
   const dispatch = useAppDispatch()
 
@@ -38,6 +36,9 @@ export default function SignUp({
   function handleFd(key: string, value: string | number | boolean) {
     dispatch(signUp({ ...formData, [key.toLowerCase()]: value }))
   }
+
+  if (loading) return <FullScreenLoading />
+
   return (
     <FullScreenModal heading="Sign up">
       <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start gap-4">
@@ -64,7 +65,12 @@ export default function SignUp({
           </div>
         </div>
         <div>
-          <Button color="green" label="Sign up" onClick={() => onSubmit(formData)} />
+          <Button
+            color="green"
+            label="Sign up"
+            onClick={() => onSubmit(formData)}
+            loading={sending}
+          />
           {!!formErr && <Info text={formErr} variant="error" />}
           {!!acceptErr && (
             <Info text="You must accept Terms and Conditions" variant="error" />
