@@ -15,15 +15,26 @@ import useMobile from "../../utils/customHooks/useMobile"
 
 const Profile = () => {
   const router = useRouter()
-  const { isLoggedIn } = useLocalStorage()
+  const { isLoggedIn, remove } = useLocalStorage()
   const isMobile = useMobile()
+
+  const route = {
+    signin: () => router.replace("/profile/signin"),
+    profile: () => router.replace("/profile"),
+  }
+
   if (isMobile === undefined) return <FullScreenLoading />
   if (isMobile === false) return <div>desktop app</div>
 
   if (isLoggedIn === undefined) return <FullScreenLoading />
   if (isLoggedIn === false) {
-    router.replace("/profile/signin")
+    route.signin()
     return <FullScreenLoading />
+  }
+
+  function logOut() {
+    remove("userToken")
+    route.signin()
   }
 
   const links: LinkType[] = [
@@ -35,7 +46,7 @@ const Profile = () => {
     { title: "Privacy Policy", Icon: KeyIcon, onClick: () => {} },
     { title: "divider" },
     { title: "Information", Icon: InformationCircleIcon, onClick: () => {} },
-    { title: "Log Out", Icon: PowerIcon, onClick: () => {} },
+    { title: "Log Out", Icon: PowerIcon, onClick: logOut },
   ]
   return <UserProfile links={links} />
 }

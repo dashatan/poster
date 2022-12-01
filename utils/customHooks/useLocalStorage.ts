@@ -22,8 +22,13 @@ export default function useLocalStorage() {
   const set = {
     userToken: (userToken: string) => setData((data) => ({ ...data, userToken })),
   }
+  const remove = (key: string) => {
+    if (typeof window === undefined) return
+    window.localStorage.removeItem(key)
+  }
+
   const token = data.userToken
   const isLoggedIn = token === undefined ? undefined : token === null ? false : true
 
-  return { ...data, isLoggedIn, set }
+  return { ...data, isLoggedIn, set, remove }
 }
