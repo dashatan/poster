@@ -1,9 +1,9 @@
 import { UserIcon } from "@heroicons/react/24/outline"
-import { Icon } from "../../../utils/types"
-import ListItemCard from "../../molecules/cards/ListItemCard"
-import FullScreenModal from "../../layouts/FullScreenModal"
-import FullScreenLoading from "../../layouts/FullScreenLoading"
-import { User } from "../../../utils/services/auth"
+import { Icon } from "utils/types"
+import { User } from "utils/services/auth"
+import FullScreenLoading from "components/layouts/FullScreenLoading"
+import ListItemCard from "components/molecules/cards/ListItemCard"
+import FullScreenModal from "components/layouts/FullScreenModal"
 export interface LinkType {
   title: string
   Icon?: Icon

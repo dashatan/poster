@@ -39,6 +39,7 @@ export default function SignIn() {
       const errs: StringObj = {}
       validation.error.issues.map((x) => (errs[x.path[0]] = x.message))
       setErrors(errs)
+      setSending(false)
       return
     }
     const { form: formErr } = errors

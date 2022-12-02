@@ -48,6 +48,7 @@ export default function SignUp(props: SignUpProps) {
           <TextField label="Name" value={name} onChange={handleFd} error={nameErr} />
           <TextField label="Email" value={email} onChange={handleFd} error={emailErr} />
           <TextField
+            type="Password"
             label="Password"
             value={password}
             onChange={handleFd}

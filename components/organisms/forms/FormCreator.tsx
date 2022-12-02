@@ -1,3 +1,4 @@
+import { KeyValueObj } from "utils/types"
 import Attribute, { Prop } from "../../../utils/types/Attribute"
 import CheckBoxField from "../../molecules/inputs/CheckBoxField"
 import NumberField from "../../molecules/inputs/NumberField"
@@ -6,7 +7,7 @@ import Select from "./Select"
 
 export interface FormCreatorProps {
   fields: Attribute[]
-  formData: { key: string; value: string }[]
+  formData: KeyValueObj[]
   onChange?: (key: string, value: string) => void
 }
 
