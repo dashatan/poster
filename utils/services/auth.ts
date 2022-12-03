@@ -13,6 +13,7 @@ const baseUrl = "http://localhost:5000"
 export const auth = createApi({
   reducerPath: "auth",
   baseQuery: fetchBaseQuery({ baseUrl }),
+  tagTypes: ["User", "Auth"],
   endpoints: (builder) => ({
     login: builder.mutation<string, StringObj>({
       query: (body) => ({ url: "/auth/login", method: "POST", body }),
@@ -23,9 +24,18 @@ export const auth = createApi({
     user: builder.query<User, string>({
       query: (id) => userQuery({ id }),
       transformResponse: (res: { data: { user: User } }) => res.data.user,
+      providesTags: ["User"],
+    }),
+    userUpdate: builder.mutation<User, StringObj>({
+      query: (body) => ({ url: "/user", method: "PATCH", body }),
+      invalidatesTags: ["User"],
+    }),
+    userDelete: builder.mutation<User, StringObj>({
+      query: (body) => ({ url: "/user", method: "DELETE", body }),
+      invalidatesTags: ["User"],
     }),
   }),
 })
 const useLazyUserQuery = auth.endpoints.user.useLazyQuery
 export { useLazyUserQuery }
-export const { useLoginMutation, useSignupMutation } = auth
+export const { useLoginMutation, useSignupMutation, useUserUpdateMutation } = auth

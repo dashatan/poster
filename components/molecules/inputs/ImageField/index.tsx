@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ChangeEvent, useEffect, useMemo, useState } from "react"
+import useLocalStorage from "utils/customHooks/useLocalStorage"
 import {
   useRemoveTmpFileMutation,
   useUploadTmpFileMutation,
@@ -41,9 +42,9 @@ export default function ImageField(props: ImageFieldProps) {
   const [currentFile, setCurrentFile] = useState("")
   const [uploadTmp] = useUploadTmpFileMutation()
   const [removeTmp] = useRemoveTmpFileMutation()
-  const cf = useMemo(() => {
-    return currentFile
-  }, [currentFile])
+
+  const cf = useMemo(() => currentFile, [currentFile])
+
   useEffect(() => {
     if (!value) return
     const urls = value.split(",")
