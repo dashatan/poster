@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { useLazyUserQuery, User } from "utils/services/auth"
 import useAuth from "./useAuth"
-import useLocalStorage from "./useLocalStorage"
 
 export default function useUser() {
   const [userTrigger] = useLazyUserQuery()

@@ -1,3 +1,4 @@
+import { createSlice } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import userQuery from "../GraphQL/queries/userQuery"
 import { StringObj } from "../types"
@@ -7,7 +8,6 @@ export interface User {
   email: string
   avatar: string
 }
-
 const baseUrl = "http://localhost:5000"
 
 export const auth = createApi({
@@ -36,6 +36,18 @@ export const auth = createApi({
     }),
   }),
 })
+
+export const authSlice = createSlice({
+  initialState: { authToken: "" },
+  name: "authSlice",
+  reducers: {
+    authToken: (state, action) => {
+      state.authToken = action.payload
+    },
+  },
+})
+
 const useLazyUserQuery = auth.endpoints.user.useLazyQuery
+
 export { useLazyUserQuery }
 export const { useLoginMutation, useSignupMutation, useUserUpdateMutation } = auth

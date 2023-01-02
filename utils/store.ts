@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/dist/query"
-import { auth } from "./services/auth"
+import { auth, authSlice } from "./services/auth"
 import { files } from "./services/files"
 import { posts } from "./services/posts"
 import { statics } from "./services/statics"
@@ -10,6 +10,7 @@ import { SearchSlice } from "./slices/search"
 export const store = configureStore({
   reducer: {
     //slices
+    [authSlice.name]: authSlice.reducer,
     [SearchSlice.name]: SearchSlice.reducer,
     [FormData.name]: FormData.reducer,
 

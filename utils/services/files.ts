@@ -29,7 +29,7 @@ export const files = createApi({
         return await axios
           .post(api, data, {
             headers: {
-              Authorization: "Bearer " + authToken,
+              // Authorization: "Bearer " + authToken,
             },
           })
           .then((res) => ({ data: res.data }))
