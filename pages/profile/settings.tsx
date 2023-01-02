@@ -29,7 +29,7 @@ export default function Settings(props: settingsProps) {
     data.append("image", files[0])
     data.append("userId", userToken)
     try {
-      const avatar = await imageUpload({ data: "ssadad" }).unwrap()
+      const avatar = await imageUpload({ data }).unwrap()
       const updatedUser = await userUpdate({ avatar }).unwrap()
       console.log(updatedUser)
     } catch (error) {
