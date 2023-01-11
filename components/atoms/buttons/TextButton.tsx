@@ -1,18 +1,19 @@
+import { twMerge } from "tailwind-merge"
 import { Icon } from "../../../utils/types"
 
 export interface TextButtonProps {
   label: string
   Icon?: Icon
-  classes?: string
-  IconClass?: string
+  className?: string
+  IconClassName?: string
   color?: "blue" | "red" | "green" | "none"
   onClick?: () => void
 }
 export default function TextButton({
   label,
   Icon,
-  IconClass,
-  classes,
+  IconClassName,
+  className,
   color,
   onClick,
 }: TextButtonProps) {
@@ -24,18 +25,15 @@ export default function TextButton({
   }
   const textColor = color ? textColors[color] : textColors.blue
   const colorClasses = [textColor].join(" ")
-  const extraClasses = classes ? classes : ""
+
+  const classes = twMerge(
+    "flex items-center justify-center cursor-pointer",
+    colorClasses,
+    className
+  )
   return (
-    <div
-      className={
-        "flex items-center justify-center cursor-pointer p-2 hover:bg-light-3 dark:hover:bg-dark-7 rounded-md transition-all duration-300" +
-        colorClasses +
-        " " +
-        extraClasses
-      }
-      onClick={onClick}
-    >
-      {Icon && <Icon className={IconClass ? IconClass : "w-6 h-6"} />}
+    <div className={classes} onClick={onClick}>
+      {Icon && <Icon className={IconClassName ? IconClassName : "w-6 h-6"} />}
       <div>{label}</div>
     </div>
   )

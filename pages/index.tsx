@@ -16,29 +16,41 @@ const HomePage: NextPage = () => {
   const { data } = useCategoriesQuery()
   const { isLoading, isMobile } = useResponsive()
 
-  if (isLoading) {
-    return <></>
-  } else if (!isMobile) {
-    return (
-      <DesktopLayout sideBar={<div>sidebar</div>} topBar={<div>header</div>}>
-        <div>desktop</div>
-      </DesktopLayout>
-    )
-  } else {
-    return (
-      <PhoneLayout>
-        <Home
-          categories={data?.filter((x) => x.parentSlug === "categories")}
-          posts={posts}
-          placeHolders={{
-            selectPlaceHolder: "tabriz",
-            searchPlaceHolder: "",
-          }}
-          onIconCardClick={(item) => router.push(`/categories/${item.title}`)}
-        />
-      </PhoneLayout>
-    )
-  }
+  // if (isLoading) {
+  //   return <></>
+  // } else if (!isMobile) {
+  //   return (
+  //     <div className="w-full p-2 flex flex-col items-center">
+  //       <div>
+  //         Desktop version is under developing, please see this page in your phone or in
+  //         your browser switch to developer mode and simulate phone view
+  //       </div>
+  //       <div className="text-right" dir="rtl">
+  //         نسخه دسکتاپ در دست توسعه میباشد، لطفا این صفحه را در گوشی خود ببینید و یا در
+  //         قسمت developer mode مرورگر خود حالت شبیه سازی موبایل را فعال کنید
+  //       </div>
+  //     </div>
+  //   )
+  // return (
+  //   <DesktopLayout sideBar={<div>sidebar</div>} topBar={<div>header</div>}>
+  //     <div>desktop</div>
+  //   </DesktopLayout>
+  // )
+  // } else {
+  return (
+    <PhoneLayout>
+      <Home
+        categories={data?.filter((x) => x.parentSlug === "categories")}
+        posts={posts}
+        placeHolders={{
+          selectPlaceHolder: "tabriz",
+          searchPlaceHolder: "",
+        }}
+        onIconCardClick={(item) => router.push(`/categories/${item.title}`)}
+      />
+    </PhoneLayout>
+  )
+  // }
 }
 
 export default HomePage
