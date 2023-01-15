@@ -10,7 +10,7 @@ import Button from "../../atoms/buttons/Button"
 import { initialState } from "../../../utils/slices/formData"
 import ImageField from "../../molecules/inputs/ImageField"
 import { KeyValueObj } from "../../../utils/types"
-import { ListItem } from "./SelectiveList"
+import { ListItem } from "../../organisms/SelectiveList"
 
 export interface CreatePostProps {
   categories: Category[]

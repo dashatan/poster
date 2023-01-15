@@ -3,7 +3,7 @@ import { PostObject } from "../GraphQL/mutations/createPost"
 import postsQuery from "../GraphQL/queries/postsQuery"
 import Post from "../types/Post"
 
-const baseUrl = "http://localhost:5000"
+const baseUrl = process.env.NEXT_PUBLIC_SERVICES_BASE_URL
 
 export const posts = createApi({
   reducerPath: "posts",

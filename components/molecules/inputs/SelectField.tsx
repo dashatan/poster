@@ -2,8 +2,9 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline"
 import { useRouter } from "next/router"
 import Portal from "../../templates/phone/Portal"
-import SelectiveList, { ListItem } from "../../templates/phone/SelectiveList"
+import SelectiveList, { ListItem } from "../../organisms/SelectiveList"
 import FormFieldCard, { beautifyWord } from "../cards/FormFieldCard"
+import FullScreenSelectiveList from "components/templates/phone/FullScreenSelectiveList"
 
 export interface SelectFieldProps {
   label: string
@@ -34,11 +35,11 @@ export default function SelectField(props: SelectFieldProps) {
   const selectiveList = (
     <Portal>
       <div className="fixed top-0 left-0 h-screen w-screen">
-        <SelectiveList
+        <FullScreenSelectiveList
           heading={props.label}
           withSearch={props.withSearch}
           asOptionTitle={props.asOptionTitle}
-          listItems={props.options}
+          data={props.options}
           url={props.url}
           onChange={handleChange}
         />
@@ -67,11 +68,7 @@ export default function SelectField(props: SelectFieldProps) {
 
   return (
     <>
-      <FormFieldCard
-        clicked={!!props.value}
-        label={props.label}
-        onClick={modalRouter}
-      >
+      <FormFieldCard clicked={!!props.value} label={props.label} onClick={modalRouter}>
         <div className="text-base text-dark-8 dark:text-dark-3">
           {beautifyWord(displayVal)}
         </div>

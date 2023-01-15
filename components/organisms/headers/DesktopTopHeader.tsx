@@ -16,20 +16,22 @@ export interface DesktopTopHeaderProps {}
 export default function DesktopTopHeader(props: DesktopTopHeaderProps) {
   return (
     <div className="flex justify-between p-2 items-center">
-      <div className="flex justify-start items-center gap-10 ">
-        <SimpleButton
-          label="Tehran"
-          Icon={MapPinIcon}
-          IconClassName="w-4 h-4"
-          color="none"
-        />
-        <SimpleButton
-          label="Categories"
-          Icon={ChevronDownIcon}
-          IconClassName="w-4 h-4"
-          className="flex-row-reverse gap-2"
-          color="none"
-        />
+      <div className="flex justify-start items-center ">
+        <div className="w-80 flex gap-10">
+          <SimpleButton
+            label="Tehran"
+            Icon={MapPinIcon}
+            IconClassName="w-4 h-4"
+            color="none"
+          />
+          <SimpleButton
+            label="Categories"
+            Icon={ChevronDownIcon}
+            IconClassName="w-4 h-4"
+            className="flex-row-reverse gap-2"
+            color="none"
+          />
+        </div>
         <SearchField value="" className="px-2 rounded-md w-80" placeHolder="Search" />
       </div>
       <div className="flex justify-end items-center gap-10">

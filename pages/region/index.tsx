@@ -1,9 +1,10 @@
 import provinces from "../../utils/static/iran/provinces.json"
 import { useRouter } from "next/router"
-import SelectiveList, { ListItem } from "../../components/templates/phone/SelectiveList"
+import SelectiveList, { ListItem } from "../../components/organisms/SelectiveList"
 import { useCitiesQuery } from "utils/services/statics"
 import FullScreenLoading from "components/layouts/FullScreenLoading"
 import FullScreenModal from "components/layouts/FullScreenModal"
+import FullScreenSelectiveList from "components/templates/phone/FullScreenSelectiveList"
 
 export default function Region() {
   const router = useRouter()
@@ -24,9 +25,9 @@ export default function Region() {
 
   if (cities) {
     return (
-      <SelectiveList
+      <FullScreenSelectiveList
         heading="Provinces"
-        listItems={cities}
+        data={cities}
         asOptionTitle="title_en"
         onChange={handleClick}
         withNavigationIcon={true}

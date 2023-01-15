@@ -7,7 +7,7 @@ interface UploadTmpArgs {
   onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
 }
 
-const baseUrl = "http://localhost:5000"
+const baseUrl = process.env.NEXT_PUBLIC_SERVICES_BASE_URL
 
 export const files = createApi({
   reducerPath: "files",

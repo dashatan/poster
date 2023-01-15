@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
-import { ListItem } from "../../components/templates/phone/SelectiveList"
+import { ListItem } from "../../components/organisms/SelectiveList"
 import categoriesQuery from "../GraphQL/queries/categoriesQuery"
 import citiesQuery from "../GraphQL/queries/citiesQuery"
 import Category from "../types/Category"
 
-const baseUrl = "http://localhost:5000"
+// const baseUrl = "http://localhost:5000"
+const baseUrl = process.env.NEXT_PUBLIC_SERVICES_BASE_URL
 
 export const statics = createApi({
   reducerPath: "statics",

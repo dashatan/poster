@@ -1,6 +1,6 @@
 import Attribute from "../../../utils/types/Attribute"
 import SelectField from "../../molecules/inputs/SelectField"
-import { ListItem } from "../../templates/phone/SelectiveList"
+import { ListItem } from "../SelectiveList"
 import { getPropVal } from "./FormCreator"
 
 export interface SelectProps {

@@ -8,7 +8,7 @@ export interface User {
   email: string
   avatar: string
 }
-const baseUrl = "http://localhost:5000"
+const baseUrl = process.env.NEXT_PUBLIC_SERVICES_BASE_URL
 
 export const auth = createApi({
   reducerPath: "auth",

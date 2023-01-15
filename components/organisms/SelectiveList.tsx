@@ -2,9 +2,9 @@ import { useRouter } from "next/router"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
 import ViewportList from "react-viewport-list"
 import Fuse from "fuse.js"
-import ListItemCard from "../../molecules/cards/ListItemCard"
-import SearchField from "../../molecules/inputs/SearchField"
-import FullScreenModal from "../../layouts/FullScreenModal"
+import ListItemCard from "../molecules/cards/ListItemCard"
+import SearchField from "../molecules/inputs/SearchField"
+import FullScreenModal from "../layouts/FullScreenModal"
 
 export interface ListItem {
   title: string
@@ -15,9 +15,11 @@ export interface ListItem {
 
 export interface SelectiveListProps {
   heading: string
+  setHeading: (heading: string) => void
   listItems: ListItem[]
   onChange?: (item: ListItem) => void
-  onBackBtnClick?: () => void
+  backTrigger?: boolean
+  resetBackTrigger?: () => void
   withNavigationIcon?: boolean
   asOptionTitle?: string
   withSearch?: boolean
@@ -47,7 +49,16 @@ export default function SelectiveList(props: SelectiveListProps) {
       return newItems
     }
     setItems(getItems())
+    props.setHeading(getHeading())
   }, [isRoot, props.listItems, url])
+
+  useEffect(() => {
+    const { backTrigger, resetBackTrigger } = props
+    if (backTrigger) {
+      handleBackBtn()
+      resetBackTrigger && resetBackTrigger()
+    }
+  }, [props.backTrigger])
 
   function handleClick(item: ListItem) {
     if (hasChildren(item)) {
@@ -100,21 +111,21 @@ export default function SelectiveList(props: SelectiveListProps) {
   }
 
   return (
-    <FullScreenModal heading={getHeading()} onBackBtnClick={handleBackBtn}>
-      <ul className="overflow-y-auto h-full hide-scrollbar px-6 py-2" ref={ref}>
-        {props.withSearch && (
-          <SearchField value={searchTerm} onChange={handleSearch} placeHolder="search" />
-        )}
-        {!searchTerm ? (
-          <ViewportList viewportRef={ref} items={items}>
-            {(item: ListItem) => itemCard(item)}
-          </ViewportList>
-        ) : (
-          <ViewportList viewportRef={ref} items={searchedItems}>
-            {(item) => itemCard(item.item)}
-          </ViewportList>
-        )}
-      </ul>
-    </FullScreenModal>
+    // <FullScreenModal heading={getHeading()} onBackBtnClick={handleBackBtn}>
+    <ul className="overflow-y-auto h-full hide-scrollbar px-6 py-2" ref={ref}>
+      {props.withSearch && (
+        <SearchField value={searchTerm} onChange={handleSearch} placeHolder="search" />
+      )}
+      {!searchTerm ? (
+        <ViewportList viewportRef={ref} items={items}>
+          {(item: ListItem) => itemCard(item)}
+        </ViewportList>
+      ) : (
+        <ViewportList viewportRef={ref} items={searchedItems}>
+          {(item) => itemCard(item.item)}
+        </ViewportList>
+      )}
+    </ul>
+    // </FullScreenModal>
   )
 }

@@ -4,7 +4,7 @@ import PostCard, { PostCardProps } from "../../molecules/cards/PostCard"
 import SearchBoxWithSelect from "../../molecules/search_boxes/SearchBoxWithSelect"
 import ViewportList from "react-viewport-list"
 import { useRouter } from "next/router"
-import { ListItem } from "./SelectiveList"
+import { ListItem } from "../../organisms/SelectiveList"
 import Category from "../../../utils/types/Category"
 
 export interface HomeProps {
