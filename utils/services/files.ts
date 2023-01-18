@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
 import axios, { AxiosProgressEvent } from "axios"
+import { RootState } from "utils/store"
 import { StringObj } from "utils/types"
 
 interface UploadTmpArgs {
@@ -15,7 +16,7 @@ export const files = createApi({
   //TODO prepare headers - save authToken in redux store - reconsider useLocalStorage
   endpoints: (builder) => ({
     uploadTmpFile: builder.mutation<string, UploadTmpArgs>({
-      queryFn: async ({ data, onUploadProgress }) => {
+      queryFn: async ({ data, onUploadProgress }, { getState }) => {
         const api = baseUrl + "/file/upload/tmp"
         return await axios
           .post(api, data, { onUploadProgress })
@@ -24,16 +25,23 @@ export const files = createApi({
       },
     }),
     uploadFile: builder.mutation<string, UploadTmpArgs>({
-      queryFn: async ({ data }) => {
+      queryFn: async ({ data }, { getState }) => {
+        const token: string = (getState() as RootState).authSlice.authToken
         const api = baseUrl + "/file/upload"
         return await axios
           .post(api, data, {
             headers: {
-              // Authorization: "Bearer " + authToken,
+              Authorization: `Bearer ${token}`,
             },
           })
-          .then((res) => ({ data: res.data }))
-          .catch((err) => ({ error: err.response.data }))
+          .then((res) => {
+            return { data: res.data }
+          })
+          .catch((err) => ({
+            status: 500,
+            statusText: "upload error",
+            data: err.response.data,
+          }))
       },
     }),
     removeTmpFile: builder.mutation<{ success: boolean; message: string }, string>({

@@ -4,6 +4,7 @@ import { User } from "utils/services/auth"
 import FullScreenLoading from "components/layouts/FullScreenLoading"
 import ListItemCard from "components/molecules/cards/ListItemCard"
 import FullScreenModal from "components/layouts/FullScreenModal"
+
 export interface LinkType {
   title: string
   Icon?: Icon
@@ -12,10 +13,11 @@ export interface LinkType {
 export interface ProfileProps {
   links: LinkType[]
   loading: boolean
-  user?: User
+  user: User
 }
+
 export default function UserProfile({ links, loading, user }: ProfileProps) {
-  if (loading || !user) return <FullScreenLoading />
+  if (loading) return <FullScreenLoading />
 
   const link = (link: LinkType, index: number) =>
     link.title === "divider" ? (
@@ -34,8 +36,12 @@ export default function UserProfile({ links, loading, user }: ProfileProps) {
     <FullScreenModal heading="Profile">
       <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start gap-4">
         <div className="flex flex-col items-center justify-center gap-0">
-          <div className="bg-light-4 rounded-full w-24 h-24 flex justify-center items-center">
-            {user.avatar ? <div></div> : <UserIcon className="w-12 text-light-6" />}
+          <div className="bg-light-4 rounded-full w-24 h-24 flex justify-center items-center overflow-hidden">
+            {user.avatar ? (
+              <img src={user.avatar} alt={user.name} className="w-full" />
+            ) : (
+              <UserIcon className="w-12 text-light-6" />
+            )}
           </div>
           <div className="flex flex-col items-center justify-center">
             <div className="font-bold text-light-6 dark:text-dark-4">{user.name}</div>

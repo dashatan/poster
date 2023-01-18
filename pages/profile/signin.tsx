@@ -7,10 +7,12 @@ import { LoginFormData } from "../../utils/slices/formData"
 import { isErrorWithData } from "../../utils/helpers"
 import { useLoginMutation } from "../../utils/services/auth"
 import useLocalStorage from "../../utils/customHooks/useLocalStorage"
+import useAuth from "utils/customHooks/useAuth"
+import FullScreenLoading from "components/layouts/FullScreenLoading"
 
 export default function SignIn() {
   const router = useRouter()
-  const ls = useLocalStorage()
+  const { isLoggedIn, setUserToken } = useAuth()
   const [errors, setErrors] = useState<StringObj>({})
   const [send] = useLoginMutation()
   const [loading, setLoading] = useState(true)
@@ -24,7 +26,9 @@ export default function SignIn() {
     profile: () => router.replace("/profile"),
   }
 
-  if (ls.isLoggedIn === true) route.profile()
+  useEffect(() => {
+    if (isLoggedIn === true) route.profile()
+  }, [isLoggedIn])
 
   const LoginSchema = z.object({
     email: z.string().email("Email is not valid"),
@@ -47,7 +51,7 @@ export default function SignIn() {
     const data = { email, password }
     try {
       const payload = await send(data).unwrap()
-      ls.set.userToken(payload)
+      setUserToken(payload)
       route.profile()
     } catch (error) {
       if (isErrorWithData(error)) {
@@ -57,6 +61,8 @@ export default function SignIn() {
     }
     setSending(false)
   }
+
+  // if (isLoggedIn) return <FullScreenLoading />
 
   return (
     <Login

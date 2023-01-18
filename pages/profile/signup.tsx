@@ -1,5 +1,7 @@
+import FullScreenLoading from "components/layouts/FullScreenLoading"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
+import useAuth from "utils/customHooks/useAuth"
 import { z } from "zod"
 import SignUp from "../../components/templates/phone/SignUp"
 import useLocalStorage from "../../utils/customHooks/useLocalStorage"
@@ -12,7 +14,7 @@ export interface SignUpProps {}
 
 export default function SignUpPage(props: SignUpProps) {
   const router = useRouter()
-  const ls = useLocalStorage()
+  const { isLoggedIn, setUserToken } = useAuth()
   const [errors, setErrors] = useState<StringObj>({})
   const [signup] = useSignupMutation()
   const [loading, setLoading] = useState(true)
@@ -26,7 +28,9 @@ export default function SignUpPage(props: SignUpProps) {
     terms: () => router.replace("/profile/terms"),
     profile: () => router.replace("/profile"),
   }
-  if (ls.isLoggedIn === true) route.profile()
+  useEffect(() => {
+    if (isLoggedIn === true) route.profile()
+  }, [isLoggedIn])
 
   const LoginSchema = z.object({
     name: z.string().min(3, "Name must contain at least 3 characters"),
@@ -51,7 +55,7 @@ export default function SignUpPage(props: SignUpProps) {
     const data = { email, password, name }
     try {
       const payload = await signup(data).unwrap()
-      ls.set.userToken(payload)
+      setUserToken(payload)
       route.profile()
     } catch (error) {
       if (isErrorWithData(error)) {
@@ -61,6 +65,7 @@ export default function SignUpPage(props: SignUpProps) {
     }
     setSending(false)
   }
+
   return (
     <SignUp
       errors={errors}

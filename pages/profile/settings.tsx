@@ -6,6 +6,7 @@ import FullScreenLoading from "components/layouts/FullScreenLoading"
 import FullScreenModal from "components/layouts/FullScreenModal"
 import TextField from "components/molecules/inputs/TextField"
 import { ChangeEvent, useRef } from "react"
+import useAuth from "utils/customHooks/useAuth"
 import useLocalStorage from "utils/customHooks/useLocalStorage"
 import useUser from "utils/customHooks/useUser"
 import { useUserUpdateMutation } from "utils/services/auth"
@@ -13,7 +14,7 @@ import { useUploadFileMutation } from "utils/services/files"
 
 export interface settingsProps {}
 export default function Settings(props: settingsProps) {
-  const { userToken } = useLocalStorage()
+  const { userToken } = useAuth()
   const { isLoading, user } = useUser()
   const [userUpdate, { isLoading: sending }] = useUserUpdateMutation()
   const [imageUpload, { isLoading: uploading }] = useUploadFileMutation()
@@ -30,14 +31,15 @@ export default function Settings(props: settingsProps) {
     data.append("userId", userToken)
     try {
       const avatar = await imageUpload({ data }).unwrap()
-      const updatedUser = await userUpdate({ avatar }).unwrap()
-      console.log(updatedUser)
+      await userUpdate({ avatar }).unwrap()
     } catch (error) {
       console.log(error)
     }
     e.target.value = ""
   }
   const submit = () => {}
+
+  console.log(user)
 
   if (isLoading) return <FullScreenLoading />
   if (!user)

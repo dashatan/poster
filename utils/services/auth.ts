@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react"
+import { RootState } from "utils/store"
 import userQuery from "../GraphQL/queries/userQuery"
 import { StringObj } from "../types"
 
@@ -12,7 +13,18 @@ const baseUrl = process.env.NEXT_PUBLIC_SERVICES_BASE_URL
 
 export const auth = createApi({
   reducerPath: "auth",
-  baseQuery: fetchBaseQuery({ baseUrl }),
+  baseQuery: fetchBaseQuery({
+    baseUrl,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).authSlice.authToken
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`)
+      }
+
+      return headers
+    },
+  }),
   tagTypes: ["User", "Auth"],
   endpoints: (builder) => ({
     login: builder.mutation<string, StringObj>({
@@ -21,7 +33,7 @@ export const auth = createApi({
     signup: builder.mutation<string, StringObj>({
       query: (body) => ({ url: "/auth/signup", method: "POST", body }),
     }),
-    user: builder.query<User, string>({
+    user: builder.query<User, string | undefined | null>({
       query: (id) => userQuery({ id }),
       transformResponse: (res: { data: { user: User } }) => res.data.user,
       providesTags: ["User"],
@@ -30,7 +42,7 @@ export const auth = createApi({
       query: (body) => ({ url: "/user", method: "PATCH", body }),
       invalidatesTags: ["User"],
     }),
-    userDelete: builder.mutation<User, StringObj>({
+    userDelete: builder.mutation<string, StringObj>({
       query: (body) => ({ url: "/user", method: "DELETE", body }),
       invalidatesTags: ["User"],
     }),
@@ -50,4 +62,9 @@ export const authSlice = createSlice({
 const useLazyUserQuery = auth.endpoints.user.useLazyQuery
 
 export { useLazyUserQuery }
-export const { useLoginMutation, useSignupMutation, useUserUpdateMutation } = auth
+export const {
+  useLoginMutation,
+  useSignupMutation,
+  useUserUpdateMutation,
+  useUserQuery,
+} = auth

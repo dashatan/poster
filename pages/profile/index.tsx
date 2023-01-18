@@ -12,11 +12,14 @@ import UserProfile, { LinkType } from "components/templates/phone/Profile"
 import useLocalStorage from "utils/customHooks/useLocalStorage"
 import useUser from "utils/customHooks/useUser"
 import useResponsive from "utils/customHooks/useResponsive"
+import useAuth from "utils/customHooks/useAuth"
+import { useEffect } from "react"
+import FullScreenLoading from "components/layouts/FullScreenLoading"
 
 const Profile = () => {
   const router = useRouter()
-  const { isLoggedIn, remove } = useLocalStorage()
-  const { isLoading: userIsLoading, user } = useUser()
+  const { isLoggedIn } = useAuth()
+  const { isLoading, user, logout } = useUser()
   const { isDesktop } = useResponsive()
 
   const route = {
@@ -24,12 +27,12 @@ const Profile = () => {
     signin: () => router.replace("/profile/signin"),
     settings: () => router.push("/profile/settings"),
   }
-
-  if (isLoggedIn === false) route.signin()
+  useEffect(() => {
+    if (isLoggedIn === false) route.signin()
+  }, [isLoggedIn])
 
   function logOut() {
-    remove("userToken")
-    route.signin()
+    logout().then(() => route.signin())
   }
 
   const links: LinkType[] = [
@@ -44,9 +47,11 @@ const Profile = () => {
     { title: "Log Out", Icon: PowerIcon, onClick: logOut },
   ]
 
+  if (!user) return <FullScreenLoading />
+
   if (isDesktop) return <div>desktop app</div>
 
-  return <UserProfile links={links} loading={userIsLoading} user={user} />
+  return <UserProfile links={links} loading={isLoading} user={user} />
 }
 
 export default Profile
