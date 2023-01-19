@@ -9,9 +9,14 @@ import FullScreenModal from "../../components/layouts/FullScreenModal"
 import { KeyValueObj } from "../../utils/types"
 import { useCreatePostMutation } from "../../utils/services/posts"
 import { useCategoriesQuery, useCitiesQuery } from "../../utils/services/statics"
+import useAuth from "utils/customHooks/useAuth"
+import FullScreenLoading from "components/layouts/FullScreenLoading"
+import { useRouter } from "next/router"
 
 export default function Create() {
+  const router = useRouter()
   const [lsChecked, setLsChecked] = useState(false)
+  const { isLoggedIn } = useAuth()
   const dispatch = useAppDispatch()
   const formData = useAppSelector((state) => state.formData.post)
   const categories = useCategoriesQuery()
@@ -24,6 +29,10 @@ export default function Create() {
     if (fd) dispatch(post(JSON.parse(fd)))
     setLsChecked(true)
   }, [])
+
+  useEffect(() => {
+    if (isLoggedIn === false) router.replace("/profile/signin")
+  }, [isLoggedIn])
 
   function handleChange(formData: KeyValueObj[]) {
     dispatch(post(formData))
@@ -53,6 +62,8 @@ export default function Create() {
       console.log(error)
     }
   }
+
+  if (isLoggedIn === "pending" || isLoggedIn === false) return <FullScreenLoading />
 
   return (
     <FullScreenModal heading="Add New Post">
