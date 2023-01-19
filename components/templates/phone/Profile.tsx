@@ -4,6 +4,7 @@ import { User } from "utils/services/auth"
 import FullScreenLoading from "components/layouts/FullScreenLoading"
 import ListItemCard from "components/molecules/cards/ListItemCard"
 import FullScreenModal from "components/layouts/FullScreenModal"
+import Avatar from "components/molecules/cards/Avatar"
 
 export interface LinkType {
   title: string
@@ -36,13 +37,7 @@ export default function UserProfile({ links, loading, user }: ProfileProps) {
     <FullScreenModal heading="Profile">
       <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start gap-4">
         <div className="flex flex-col items-center justify-center gap-0">
-          <div className="bg-light-4 rounded-full w-24 h-24 flex justify-center items-center overflow-hidden">
-            {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-full" />
-            ) : (
-              <UserIcon className="w-12 text-light-6" />
-            )}
-          </div>
+          <Avatar src={user.avatar} />
           <div className="flex flex-col items-center justify-center">
             <div className="font-bold text-light-6 dark:text-dark-4">{user.name}</div>
             <div className="text-sm text-light-5 dark:text-dark-5">{user.email}</div>

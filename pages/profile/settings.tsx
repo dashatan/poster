@@ -4,8 +4,10 @@ import Button from "components/atoms/buttons/Button"
 import Divider from "components/atoms/Divider"
 import FullScreenLoading from "components/layouts/FullScreenLoading"
 import FullScreenModal from "components/layouts/FullScreenModal"
+import Avatar from "components/molecules/cards/Avatar"
 import TextField from "components/molecules/inputs/TextField"
-import { ChangeEvent, useRef } from "react"
+import { useRouter } from "next/router"
+import { ChangeEvent, useEffect, useRef, useState } from "react"
 import useAuth from "utils/customHooks/useAuth"
 import useLocalStorage from "utils/customHooks/useLocalStorage"
 import useUser from "utils/customHooks/useUser"
@@ -14,13 +16,21 @@ import { useUploadFileMutation } from "utils/services/files"
 
 export interface settingsProps {}
 export default function Settings(props: settingsProps) {
+  const router = useRouter()
   const { userToken } = useAuth()
   const { isLoading, user } = useUser()
   const [userUpdate, { isLoading: sending }] = useUserUpdateMutation()
   const [imageUpload, { isLoading: uploading }] = useUploadFileMutation()
-  const fileInput = useRef<HTMLInputElement>(null)
+  const [avatar, setAvatar] = useState("")
+  const [name, setName] = useState("")
 
-  const selectImage = () => fileInput.current && fileInput.current.click()
+  useEffect(() => {
+    if (user) {
+      setAvatar(user.avatar)
+      setName(user.name)
+    }
+  }, [user])
+
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const filesObj = e.target.files
     if (!filesObj || !userToken) return
@@ -32,14 +42,18 @@ export default function Settings(props: settingsProps) {
     try {
       const avatar = await imageUpload({ data }).unwrap()
       await userUpdate({ avatar }).unwrap()
+      setAvatar(avatar)
     } catch (error) {
       console.log(error)
     }
     e.target.value = ""
   }
-  const submit = () => {}
-
-  console.log(user)
+  const submit = async () => {
+    if (user && name !== user.name) {
+      await userUpdate({ name }).unwrap()
+    }
+    router.back()
+  }
 
   if (isLoading) return <FullScreenLoading />
   if (!user)
@@ -53,24 +67,11 @@ export default function Settings(props: settingsProps) {
     <FullScreenModal heading="Settings">
       <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start gap-4">
         <div className="flex flex-col justify-center items-center gap-2">
-          <div className="bg-light-4 rounded-full w-24 h-24 flex justify-center items-center overflow-hidden relative">
-            {user.avatar ? (
-              <img src={user.avatar} alt={user.name} />
-            ) : (
-              <UserIcon className="w-12 text-light-6" />
-            )}
-            <div
-              onClick={selectImage}
-              className="absolute bottom-0 left-0 w-full h-6 flex justify-center items-center bg-dark-10 text-dark-4 bg-opacity-40"
-            >
-              <CameraIcon className="w-4 h-4" />
-              <input ref={fileInput} type="file" onChange={handleChange} hidden />
-            </div>
-          </div>
+          <Avatar src={avatar} onChange={handleChange} />
           <div className="text-sm">Change profile picture</div>
         </div>
         <Divider space="4" />
-        <TextField label="name" value={user.name} />
+        <TextField label="name" value={name} onChange={(key, value) => setName(value)} />
         <Divider space="4" />
         <Button color="blue" label="update" onClick={submit} loading={sending} />
       </div>
