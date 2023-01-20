@@ -12,6 +12,7 @@ import { useCategoriesQuery, useCitiesQuery } from "../../utils/services/statics
 import useAuth from "utils/customHooks/useAuth"
 import FullScreenLoading from "components/layouts/FullScreenLoading"
 import { useRouter } from "next/router"
+import FullScreenError from "components/layouts/FullScreenError"
 
 export default function Create() {
   const router = useRouter()
@@ -65,22 +66,14 @@ export default function Create() {
 
   if (isLoggedIn === "pending" || isLoggedIn === false) return <FullScreenLoading />
 
-  return (
-    <FullScreenModal heading="Add New Post">
-      <div className="overflow-y-auto h-full hide-scrollbar px-6 py-2">
-        {(categories.isLoading || cities.isLoading || !lsChecked) && (
-          <div className="flex flex-col justify-center items-center h-10 mt-4">
-            <Spinner />
-          </div>
-        )}
-        {categories.isError && (
-          <div className="flex flex-col justify-center items-center mt-4">
-            <XCircleIcon className="w-16" />
-            <div className="text-xl">Some thing went wrong</div>
-            utils
-          </div>
-        )}
-        {categories.data && cities.data && formData && lsChecked && (
+  if (categories.isLoading || cities.isLoading || !lsChecked) return <FullScreenLoading />
+
+  if (categories.isError) return <FullScreenError />
+
+  if (categories.data && cities.data && formData && lsChecked) {
+    return (
+      <FullScreenModal heading="Add New Post">
+        <div className="overflow-y-auto h-full hide-scrollbar px-6 py-2">
           <NewPostForm
             categories={categories.data}
             cities={cities.data}
@@ -89,8 +82,8 @@ export default function Create() {
             onSubmit={handleSubmit}
             requiredFields={required}
           />
-        )}
-      </div>
-    </FullScreenModal>
-  )
+        </div>
+      </FullScreenModal>
+    )
+  } else return <FullScreenError />
 }

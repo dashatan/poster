@@ -1,8 +1,11 @@
 import { ChevronDownIcon, MapPinIcon, UserIcon } from "@heroicons/react/24/outline"
 import Button from "components/atoms/buttons/Button"
 import TextButton, { TextButtonProps } from "components/atoms/buttons/TextButton"
+import { beautifyWord } from "components/molecules/cards/FormFieldCard"
 import SearchField from "components/molecules/inputs/SearchField"
 import { twMerge } from "tailwind-merge"
+import { useAppSelector } from "utils/hooks"
+import { RootState } from "utils/store"
 
 const SimpleButton = (props: TextButtonProps) => {
   const classes = twMerge(
@@ -14,12 +17,13 @@ const SimpleButton = (props: TextButtonProps) => {
 
 export interface DesktopTopHeaderProps {}
 export default function DesktopTopHeader(props: DesktopTopHeaderProps) {
+  const city = useAppSelector((state: RootState) => state.search.city)
   return (
     <div className="flex justify-between p-2 items-center">
       <div className="flex justify-start items-center ">
         <div className="w-80 flex gap-10">
           <SimpleButton
-            label="Tehran"
+            label={city ? beautifyWord(city) : "Region"}
             Icon={MapPinIcon}
             IconClassName="w-4 h-4"
             color="none"

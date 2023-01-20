@@ -12,15 +12,21 @@ import DesktopTopHeader from "components/organisms/headers/DesktopTopHeader"
 import DesktopMainSideBar from "components/organisms/sidebars/DesktopMainSideBar"
 import ViewportList from "react-viewport-list"
 import PostCard, { PostCardProps } from "components/molecules/cards/PostCard"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import GridPostsList from "components/organisms/GridPostsList"
+import { beautifyWord } from "components/molecules/cards/FormFieldCard"
 
 const HomePage: NextPage = () => {
   const router = useRouter()
 
-  const search = useAppSelector((state: RootState) => state.search)
+  const search = useAppSelector((state: RootState) => state.search.text)
+  const city = useAppSelector((state: RootState) => state.search.city)
   const { data } = useCategoriesQuery()
   const { isLoading, isMobile } = useResponsive()
+
+  useEffect(() => {
+    console.log(city)
+  }, [city])
 
   if (isLoading) {
     return <></>
@@ -39,8 +45,8 @@ const HomePage: NextPage = () => {
           categories={data?.filter((x) => x.parentSlug === "categories")}
           posts={posts}
           placeHolders={{
-            selectPlaceHolder: "tabriz",
-            searchPlaceHolder: "",
+            selectPlaceHolder: city ? beautifyWord(city) : "Region",
+            searchPlaceHolder: search || "Search in posts",
           }}
           onIconCardClick={(item) => router.push(`/categories/${item.title}`)}
         />

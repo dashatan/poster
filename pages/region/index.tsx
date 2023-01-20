@@ -5,23 +5,23 @@ import { useCitiesQuery } from "utils/services/statics"
 import FullScreenLoading from "components/layouts/FullScreenLoading"
 import FullScreenModal from "components/layouts/FullScreenModal"
 import FullScreenSelectiveList from "components/templates/phone/FullScreenSelectiveList"
+import FullScreenError from "components/layouts/FullScreenError"
+import { useAppDispatch } from "utils/hooks"
+import { city } from "utils/slices/search"
 
 export default function Region() {
   const router = useRouter()
+  const dispatch = useAppDispatch()
   const { data: cities, isLoading, isError } = useCitiesQuery()
 
   function handleClick(item: ListItem) {
-    // router.push(`${router.asPath}/${item.slug}`)
+    dispatch(city(item.slug))
     router.push("/")
   }
 
-  if (isLoading) {
-    return <FullScreenLoading />
-  }
+  if (isLoading) return <FullScreenLoading />
 
-  if (isError) {
-    return <FullScreenModal heading="Error">Something went wrong</FullScreenModal>
-  }
+  if (isError) return <FullScreenError />
 
   if (cities) {
     return (
@@ -33,7 +33,5 @@ export default function Region() {
         withNavigationIcon={true}
       />
     )
-  } else {
-    return <FullScreenModal heading="Error">Something went wrong</FullScreenModal>
-  }
+  } else return <FullScreenError />
 }

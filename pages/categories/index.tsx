@@ -1,20 +1,20 @@
-import FullScreenModal from "components/layouts/FullScreenModal"
 import FullScreenSelectiveList from "components/templates/phone/FullScreenSelectiveList"
 import { useRouter } from "next/router"
-import { useState } from "react"
+import { useAppDispatch } from "utils/hooks"
+import { category } from "utils/slices/search"
 import Spinner from "../../components/atoms/Spinner"
-import SelectiveList, { ListItem } from "../../components/organisms/SelectiveList"
+import { ListItem } from "../../components/organisms/SelectiveList"
 import { useCategoriesQuery } from "../../utils/services/statics"
 
 export default function Categories() {
-  const [backTrigger, setBackTrigger] = useState(false)
+  const dispatch = useAppDispatch()
   const router = useRouter()
   const { data } = useCategoriesQuery()
   const slugs = (router.query.slug as string[]) || []
   const lastSlug = slugs[slugs.length - 1]
-  const [heading, setHeading] = useState(lastSlug || "categories")
 
   const handleChange = (item: ListItem) => {
+    dispatch(category(item.slug))
     router.push("/")
   }
 
