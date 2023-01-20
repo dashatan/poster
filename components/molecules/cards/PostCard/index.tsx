@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image"
 import PostCardBody from "./PostCardBody"
 import PostCardContainer from "./PostCardContainer"
@@ -8,18 +9,18 @@ import PostCardTip from "./PostCardTip"
 import PostCardTitle from "./PostCardTitle"
 
 export interface PostCardProps {
-    title: string;
-    topDescription?: string;
-    middleDescription?: string;
-    bottomDescription?: string;
-    thumbnail?: string;
+  title: string
+  topDescription?: string
+  middleDescription?: string
+  bottomDescription?: string
+  thumbnail?: string
 }
 
 export default function PostCard(props: PostCardProps) {
   const { title, topDescription, middleDescription, bottomDescription, thumbnail } = props
 
   const image = thumbnail ? (
-    <Image alt={title} src={thumbnail} width="128" height="128" className="rounded-xl" />
+    <img alt={title} src={thumbnail} width="128" height="128" className="rounded-xl" />
   ) : (
     <PostCardImagePlaceHolder />
   )
@@ -33,7 +34,7 @@ export default function PostCard(props: PostCardProps) {
           <PostCardTip>{bottomDescription}</PostCardTip>
         </div>
       </PostCardBody>
-      <PostCardImage>{image}</PostCardImage>
+      <PostCardImage src={thumbnail} />
     </PostCardContainer>
   )
 }

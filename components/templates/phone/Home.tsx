@@ -6,6 +6,7 @@ import ViewportList from "react-viewport-list"
 import { useRouter } from "next/router"
 import { ListItem } from "../../organisms/SelectiveList"
 import Category from "../../../utils/types/Category"
+import Button from "components/atoms/buttons/Button"
 
 export interface HomeProps {
   categories?: Category[]
@@ -15,11 +16,12 @@ export interface HomeProps {
     searchPlaceHolder: string
   }
   onIconCardClick: (item: ListItem) => void
+  onMoreItemsClick?: () => void
 }
 
 const Home = (props: HomeProps) => {
   const router = useRouter()
-  const { placeHolders, categories, posts, onIconCardClick } = props
+  const { placeHolders, categories, posts, onIconCardClick, onMoreItemsClick } = props
   const ref = useRef(null)
 
   const classes = {
@@ -89,6 +91,9 @@ const Home = (props: HomeProps) => {
             )
           }}
         </ViewportList>
+        <div className="flex justify-center items-center mb-20">
+          <Button color="blue" label="More items" onClick={onMoreItemsClick} />
+        </div>
       </div>
     </>
   )
