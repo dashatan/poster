@@ -22,6 +22,7 @@ const HomePage: NextPage = () => {
   const [getPosts] = useLazyPostsQuery()
   const search = useAppSelector((state: RootState) => state.search.text)
   const city = useAppSelector((state: RootState) => state.search.city)
+  const category = useAppSelector((state: RootState) => state.search.category)
   const { data: categories } = useCategoriesQuery()
   const { isLoading, isMobile } = useResponsive()
 
@@ -30,7 +31,15 @@ const HomePage: NextPage = () => {
   }, [city])
 
   useEffect(() => {
-    getPosts({ limit: 6, sort: "createdAt:desc", page }).then(({ data }) => {
+    getPosts({
+      limit: 6,
+      sort: "createdAt:desc",
+      page,
+      filters: [
+        { key: "cityId", value: city },
+        { key: "categoryId", value: category },
+      ],
+    }).then(({ data }) => {
       if (data) setPosts((posts) => [...posts, ...data])
     })
   }, [page])

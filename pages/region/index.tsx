@@ -31,6 +31,7 @@ export default function Region() {
         asOptionTitle="title_en"
         onChange={handleClick}
         withNavigationIcon={true}
+        withSearch={true}
       />
     )
   } else return <FullScreenError />

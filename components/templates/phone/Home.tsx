@@ -7,6 +7,7 @@ import { useRouter } from "next/router"
 import { ListItem } from "../../organisms/SelectiveList"
 import Category from "../../../utils/types/Category"
 import Button from "components/atoms/buttons/Button"
+import { XCircleIcon } from "@heroicons/react/24/outline"
 
 export interface HomeProps {
   categories?: Category[]
@@ -46,7 +47,7 @@ const Home = (props: HomeProps) => {
     body: [
       "px-3",
       "flex",
-      "flex-col",
+      "flex-wrap",
       "gap-3",
       "overflow-y-auto",
       "h-[calc(100vh_-_theme(space.36)_-_theme(space.14))]",
@@ -77,6 +78,13 @@ const Home = (props: HomeProps) => {
         </div>
       </div>
       <div className={classes.body.join(" ")} ref={ref}>
+        {!posts ||
+          (posts.length === 0 && (
+            <div className="flex flex-col gap-2 justify-center items-center p-10 text-xl dark:text-dark-4">
+              <XCircleIcon className="w-14 text-red-6 dark:text-red-5" />
+              Posts not found
+            </div>
+          ))}
         <ViewportList viewportRef={ref} items={posts}>
           {(item, index) => {
             return (
@@ -92,7 +100,9 @@ const Home = (props: HomeProps) => {
           }}
         </ViewportList>
         <div className="flex justify-center items-center mb-20">
-          <Button color="blue" label="More items" onClick={onMoreItemsClick} />
+          {posts.length > 0 && (
+            <Button color="blue" label="More items" onClick={onMoreItemsClick} />
+          )}
         </div>
       </div>
     </>

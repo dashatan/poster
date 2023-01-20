@@ -2,7 +2,7 @@
 import { XCircleIcon } from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../utils/hooks"
-import { post } from "../../utils/slices/formData"
+import { initialState, post } from "../../utils/slices/formData"
 import Spinner from "../../components/atoms/Spinner"
 import NewPostForm from "../../components/templates/phone/NewPostForm"
 import FullScreenModal from "../../components/layouts/FullScreenModal"
@@ -17,7 +17,7 @@ import FullScreenError from "components/layouts/FullScreenError"
 export default function Create() {
   const router = useRouter()
   const [lsChecked, setLsChecked] = useState(false)
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, userToken } = useAuth()
   const dispatch = useAppDispatch()
   const formData = useAppSelector((state) => state.formData.post)
   const categories = useCategoriesQuery()
@@ -47,7 +47,7 @@ export default function Create() {
     const attributes = formData.filter((x) => !exceptions.includes(x.key))
 
     const data = {
-      userId: "63793f2ae6c0220d9c076717",
+      userId: userToken || "",
       cityId: getVal("city"),
       categoryId: getVal("category"),
       title: getVal("title"),
@@ -57,8 +57,10 @@ export default function Create() {
     }
 
     try {
-      const payload = await createPost(data).unwrap()
-      console.log(payload)
+      await createPost(data)
+      dispatch(post(initialState.post))
+      window.localStorage.setItem("PostFormData", JSON.stringify(initialState.post))
+      router.back()
     } catch (error) {
       console.log(error)
     }

@@ -12,14 +12,31 @@ const baseUrl = process.env.NEXT_PUBLIC_SERVICES_BASE_URL
 
 export const files = createApi({
   reducerPath: "files",
-  baseQuery: fetchBaseQuery({ baseUrl }),
-  //TODO prepare headers - save authToken in redux store - reconsider useLocalStorage
+  baseQuery: fetchBaseQuery({
+    baseUrl,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).authSlice.authToken
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`)
+      }
+
+      return headers
+    },
+  }),
+
   endpoints: (builder) => ({
     uploadTmpFile: builder.mutation<string, UploadTmpArgs>({
       queryFn: async ({ data, onUploadProgress }, { getState }) => {
+        const token: string = (getState() as RootState).authSlice.authToken
         const api = baseUrl + "/file/upload/tmp"
         return await axios
-          .post(api, data, { onUploadProgress })
+          .post(api, data, {
+            onUploadProgress,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
           .then((res) => ({ data: res.data }))
           .catch((err) => ({ error: err.response.data }))
       },
