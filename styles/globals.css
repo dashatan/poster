@@ -2,11 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-.hide-scrollbar{
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-    display: none;  /* Safari and Chrome */
+  display: none; /* Safari and Chrome */
+}
+
+.filter-dark-6 {
+  filter: invert(31%) sepia(27%) saturate(477%) hue-rotate(175deg) brightness(92%)
+    contrast(86%);
+}
+.filter-dark-5 {
+  filter: invert(48%) sepia(7%) saturate(1386%) hue-rotate(176deg) brightness(91%)
+    contrast(88%);
+}
+.filter-dark-4 {
+  filter: invert(73%) sepia(12%) saturate(499%) hue-rotate(176deg) brightness(87%)
+    contrast(88%);
+}
+.filter-dark-3 {
+  filter: invert(90%) sepia(19%) saturate(147%) hue-rotate(171deg) brightness(95%)
+    contrast(86%);
 }
