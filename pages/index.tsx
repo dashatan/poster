@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import type { NextPage } from "next"
 import PhoneLayout from "../components/layouts/PhoneLayout"
 import Home from "../components/templates/phone/Home"
