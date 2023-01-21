@@ -34,20 +34,18 @@ export default function UserProfile({ links, loading, user }: ProfileProps) {
     )
 
   return (
-    <FullScreenModal heading="Profile">
-      <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start gap-4">
-        <div className="flex flex-col items-center justify-center gap-0">
-          <Avatar src={user.avatar} />
-          <div className="flex flex-col items-center justify-center">
-            <div className="font-bold text-light-6 dark:text-dark-4">{user.name}</div>
-            <div className="text-sm text-light-5 dark:text-dark-5">{user.email}</div>
-          </div>
-        </div>
-
-        <div className="flex flex-col justify-start">
-          <div className="flex flex-col justify-start gap-4">{links.map(link)}</div>
+    <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start gap-4">
+      <div className="flex flex-col items-center justify-center gap-0">
+        <Avatar src={user.avatar} />
+        <div className="flex flex-col items-center justify-center">
+          <div className="font-bold text-light-6 dark:text-dark-4">{user.name}</div>
+          <div className="text-sm text-light-5 dark:text-dark-5">{user.email}</div>
         </div>
       </div>
-    </FullScreenModal>
+
+      <div className="flex flex-col justify-start">
+        <div className="flex flex-col justify-start gap-4">{links.map(link)}</div>
+      </div>
+    </div>
   )
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useRouter } from "next/router"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
 import ViewportList from "react-viewport-list"
@@ -25,6 +26,7 @@ export interface SelectiveListProps {
   withSearch?: boolean
   withRouter?: boolean
   url?: string
+  onUrlChange?: (url: string) => void
 }
 
 export default function SelectiveList(props: SelectiveListProps) {
@@ -51,6 +53,10 @@ export default function SelectiveList(props: SelectiveListProps) {
     setItems(getItems())
     props.setHeading(getHeading())
   }, [isRoot, props.listItems, url])
+
+  useEffect(() => {
+    props.onUrlChange && props.onUrlChange(url)
+  }, [url])
 
   useEffect(() => {
     const { backTrigger, resetBackTrigger } = props
@@ -111,7 +117,6 @@ export default function SelectiveList(props: SelectiveListProps) {
   }
 
   return (
-    // <FullScreenModal heading={getHeading()} onBackBtnClick={handleBackBtn}>
     <ul className="overflow-y-auto h-full hide-scrollbar px-6 py-2" ref={ref}>
       {props.withSearch && (
         <SearchField value={searchTerm} onChange={handleSearch} placeHolder="search" />
@@ -126,6 +131,5 @@ export default function SelectiveList(props: SelectiveListProps) {
         </ViewportList>
       )}
     </ul>
-    // </FullScreenModal>
   )
 }

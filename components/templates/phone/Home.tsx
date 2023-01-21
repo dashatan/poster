@@ -10,6 +10,7 @@ import { ListItem } from "../../organisms/SelectiveList"
 import Category from "../../../utils/types/Category"
 import Button from "components/atoms/buttons/Button"
 import { XCircleIcon } from "@heroicons/react/24/outline"
+import FilterChips from "components/organisms/FilterChips"
 
 export interface HomeProps {
   categories?: Category[]
@@ -81,6 +82,7 @@ const Home = (props: HomeProps) => {
         </div>
       </div>
       <div className={classes.body.join(" ")} ref={ref}>
+        <FilterChips />
         {!props.loadingPosts && posts.length === 0 && (
           <div className="flex flex-col gap-4 w-full justify-start items-center p-8 text-xl dark:text-dark-4">
             <img
@@ -105,7 +107,12 @@ const Home = (props: HomeProps) => {
         </ViewportList>
         <div className="flex justify-center items-center mb-20">
           {posts.length > 0 && (
-            <Button color="blue" label="More items" onClick={onMoreItemsClick} />
+            <Button
+              color="blue"
+              label="More items"
+              onClick={props.loadingPosts ? () => {} : onMoreItemsClick}
+              loading={props.loadingPosts}
+            />
           )}
         </div>
       </div>

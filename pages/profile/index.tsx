@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   ClockIcon,
   CogIcon,
@@ -13,14 +14,39 @@ import useLocalStorage from "utils/customHooks/useLocalStorage"
 import useUser from "utils/customHooks/useUser"
 import useResponsive from "utils/customHooks/useResponsive"
 import useAuth from "utils/customHooks/useAuth"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import FullScreenLoading from "components/layouts/FullScreenLoading"
+import Portal from "components/templates/phone/Portal"
+import FullScreenModal from "components/layouts/FullScreenModal"
+import useProfileLinks from "utils/customHooks/useProfileLinks"
+import DesktopLayout from "components/layouts/DesktopLayout"
+import DesktopTopHeader from "components/organisms/headers/DesktopTopHeader"
+import GridPostsList from "components/organisms/GridPostsList"
+import { useLazyPostsQuery } from "utils/services/posts"
+import Post from "utils/types/Post"
 
 const Profile = () => {
   const router = useRouter()
-  const { isLoggedIn } = useAuth()
-  const { isLoading, user, logout } = useUser()
-  const { isDesktop } = useResponsive()
+  const { isLoggedIn, userToken } = useAuth()
+  const { isMobile } = useResponsive()
+  const { isLoading, user } = useUser()
+  const { links } = useProfileLinks()
+  const [getPosts, { isFetching: loadingPosts }] = useLazyPostsQuery()
+  const [page, setPage] = useState(1)
+  const [posts, setPosts] = useState<Post[]>([])
+
+  useEffect(() => {
+    if (userToken) {
+      getPosts({
+        limit: 6,
+        sort: "createdAt:desc",
+        page,
+        filters: [{ key: "userId", value: userToken }],
+      }).then(({ data }) => {
+        if (data) setPosts((posts) => [...posts, ...data])
+      })
+    }
+  }, [page, userToken])
 
   const route = {
     profile: () => router.replace("/profile"),
@@ -31,27 +57,22 @@ const Profile = () => {
     if (isLoggedIn === false) route.signin()
   }, [isLoggedIn])
 
-  function logOut() {
-    logout().then(() => route.signin())
-  }
-
-  const links: LinkType[] = [
-    { title: "divider" },
-    { title: "Posts", Icon: PhotoIcon, onClick: () => {} },
-    { title: "Favorites", Icon: HeartIcon, onClick: () => {} },
-    { title: "Recent Views", Icon: ClockIcon, onClick: () => {} },
-    { title: "Settings", Icon: CogIcon, onClick: route.settings },
-    { title: "Privacy Policy", Icon: KeyIcon, onClick: () => {} },
-    { title: "divider" },
-    { title: "Information", Icon: InformationCircleIcon, onClick: () => {} },
-    { title: "Log Out", Icon: PowerIcon, onClick: logOut },
-  ]
-
   if (!user) return <FullScreenLoading />
 
-  if (isDesktop) return <div>desktop app</div>
+  if (!isMobile)
+    return (
+      <DesktopLayout
+        top={<DesktopTopHeader />}
+        side={<UserProfile links={links} loading={isLoading} user={user} />}
+        main={<GridPostsList posts={posts} isLoading={loadingPosts} />}
+      />
+    )
 
-  return <UserProfile links={links} loading={isLoading} user={user} />
+  return (
+    <FullScreenModal heading="Profile">
+      <UserProfile links={links} loading={isLoading} user={user} />
+    </FullScreenModal>
+  )
 }
 
 export default Profile

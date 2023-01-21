@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { XCircleIcon } from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react"
@@ -13,11 +15,16 @@ import useAuth from "utils/customHooks/useAuth"
 import FullScreenLoading from "components/layouts/FullScreenLoading"
 import { useRouter } from "next/router"
 import FullScreenError from "components/layouts/FullScreenError"
+import useResponsive from "utils/customHooks/useResponsive"
+import DesktopTopHeader from "components/organisms/headers/DesktopTopHeader"
+import DesktopLayout from "components/layouts/DesktopLayout"
+import Button from "components/atoms/buttons/Button"
 
 export default function Create() {
   const router = useRouter()
   const [lsChecked, setLsChecked] = useState(false)
   const { isLoggedIn, userToken } = useAuth()
+  const { isMobile } = useResponsive()
   const dispatch = useAppDispatch()
   const formData = useAppSelector((state) => state.formData.post)
   const categories = useCategoriesQuery()
@@ -73,19 +80,50 @@ export default function Create() {
   if (categories.isError) return <FullScreenError />
 
   if (categories.data && cities.data && formData && lsChecked) {
-    return (
-      <FullScreenModal heading="Add New Post">
-        <div className="overflow-y-auto h-full hide-scrollbar px-6 py-2">
-          <NewPostForm
-            categories={categories.data}
-            cities={cities.data}
-            formData={formData}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-            requiredFields={required}
-          />
-        </div>
-      </FullScreenModal>
-    )
+    if (!isMobile) {
+      return (
+        <DesktopLayout
+          top={<DesktopTopHeader />}
+          side={
+            <div
+              className="text-xl text-light-8 flex flex-col justify-start items-center w-full h-full bg-contain bg-no-repeat bg-center"
+              // style={{ backgroundImage: "url('/post-office-flat.jpg')" }}
+            >
+              <img src="/post-office-flat.jpg" className="w-full" />
+              <span>Add Your post to poster</span>
+            </div>
+          }
+          main={
+            <div className="flex justify-center items-center h-full w-full bg-light-2">
+              <div className="overflow-y-auto h-full w-96 px-6 py-2">
+                <NewPostForm
+                  categories={categories.data}
+                  cities={cities.data}
+                  formData={formData}
+                  onChange={handleChange}
+                  onSubmit={handleSubmit}
+                  requiredFields={required}
+                />
+              </div>
+            </div>
+          }
+        />
+      )
+    } else {
+      return (
+        <FullScreenModal heading="Add New Post">
+          <div className="overflow-y-auto h-full hide-scrollbar px-6 py-2">
+            <NewPostForm
+              categories={categories.data}
+              cities={cities.data}
+              formData={formData}
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+              requiredFields={required}
+            />
+          </div>
+        </FullScreenModal>
+      )
+    }
   } else return <FullScreenError />
 }

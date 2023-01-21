@@ -4,7 +4,7 @@ import Spinner from "../Spinner"
 export interface ButtonProps {
   label: string
   Icon?: Icon
-  classes?: string
+  className?: string
   IconClass?: string
   color: "blue" | "red" | "green" | "none"
   onClick?: () => void
@@ -14,7 +14,7 @@ export default function Button({
   label,
   Icon,
   IconClass,
-  classes,
+  className,
   color,
   onClick,
   loading,
@@ -52,7 +52,7 @@ export default function Button({
   ].join(" ")
 
   return (
-    <div className={btnClasses + " " + classes} onClick={!loading ? onClick : () => {}}>
+    <div className={btnClasses + " " + className} onClick={!loading ? onClick : () => {}}>
       {loading ? (
         <div className="w-6 h-6">
           <Spinner />

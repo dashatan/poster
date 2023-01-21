@@ -5,6 +5,7 @@ export interface postQueryArgs {
   limit?: number
   page?: number
   sort?: string
+  search?: string
   filters?: KeyValueObj[]
 }
 export default function postsQuery(args: postQueryArgs) {
@@ -18,6 +19,7 @@ export default function postsQuery(args: postQueryArgs) {
                     ${args.limit ? `limit: ${args.limit} ,` : ""}
                     ${args.page ? `page: ${args.page} ,` : ""}
                     ${args.sort ? `sort: "${args.sort}",` : ""}
+                    ${args.search ? `search: "${args.search}",` : ""}
                     ${filters}
                     ){
                     thumbnail

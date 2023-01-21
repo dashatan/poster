@@ -28,12 +28,24 @@ const HomePage: NextPage = () => {
   const { isLoading, isMobile } = useResponsive()
 
   useEffect(() => {
-    console.log(city)
-  }, [city])
+    console.log("category changed")
+    getPosts({
+      limit: isMobile ? 6 : 12,
+      sort: "createdAt:desc",
+      page,
+      search,
+      filters: [
+        { key: "cityId", value: city },
+        { key: "categoryId", value: category },
+      ],
+    }).then(({ data }) => {
+      if (data) setPosts(data)
+    })
+  }, [category, city, search])
 
   useEffect(() => {
     getPosts({
-      limit: 6,
+      limit: isMobile ? 6 : 12,
       sort: "createdAt:desc",
       page,
       filters: [
@@ -54,7 +66,13 @@ const HomePage: NextPage = () => {
   } else if (!isMobile) {
     return (
       <DesktopLayout
-        main={<GridPostsList posts={posts} />}
+        main={
+          <GridPostsList
+            posts={posts}
+            onMoreItemsClick={handleMoreItems}
+            isLoading={loadingPosts}
+          />
+        }
         top={<DesktopTopHeader />}
         side={<DesktopMainSideBar />}
       />

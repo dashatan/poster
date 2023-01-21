@@ -31,7 +31,7 @@ export default function ListItemCard(props: ListItemCardProps) {
 
   return (
     <li className={classes + ""} onClick={onClick}>
-      <div className="flex gap-4">
+      <button className="flex gap-4">
         {icon && (
           <svg className="w-6 h-6">
             <use href={`/icons/${icon}.svg#${icon}`}></use>
@@ -39,7 +39,7 @@ export default function ListItemCard(props: ListItemCardProps) {
         )}
         {Icon && <Icon className="w-6 h-6" />}
         {beautifyWord(title)}
-      </div>
+      </button>
       <div>{withNavigationIcon && <ChevronRightIcon className="w-6 h-6" />}</div>
     </li>
   )
