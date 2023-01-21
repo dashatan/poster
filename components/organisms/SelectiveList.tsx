@@ -67,6 +67,7 @@ export default function SelectiveList(props: SelectiveListProps) {
   }, [props.backTrigger])
 
   function handleClick(item: ListItem) {
+    console.log(item)
     if (hasChildren(item)) {
       const newUrl = `${url}/${item.slug}`
       setUrl(newUrl)
@@ -90,7 +91,9 @@ export default function SelectiveList(props: SelectiveListProps) {
   }
 
   function hasChildren(item: ListItem) {
-    const children = props.listItems.filter((x) => x.parentSlug === item.slug)
+    const children = props.listItems.filter(
+      (x) => x.parentSlug === item.slug && item.slug !== item.parentSlug
+    )
     return children.length > 0
   }
 
