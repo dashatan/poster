@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { ChevronRightIcon } from "@heroicons/react/24/outline"
 import { Icon } from "../../../utils/types"
@@ -28,14 +29,16 @@ export default function ListItemCard(props: ListItemCardProps) {
     "text-dark-8",
     "dark:text-dark-4",
   ].join(" ")
-
+  const baseUrl = process.env.NEXT_PUBLIC_SERVICES_BASE_URL
+  const url = `${baseUrl}/icons/${icon}.svg#${icon}`
   return (
     <li className={classes + ""} onClick={onClick}>
       <button className="flex gap-4">
         {icon && (
-          <svg className="w-6 h-6">
-            <use href={`/icons/${icon}.svg#${icon}`}></use>
-          </svg>
+          // <svg className="w-6 h-6">
+          //   <use href={`/icons/${icon}.svg#${icon}`}></use>
+          // </svg>
+          <img src={url} className="w-6 h-6 " />
         )}
         {Icon && <Icon className="w-6 h-6" />}
         {beautifyWord(title)}
