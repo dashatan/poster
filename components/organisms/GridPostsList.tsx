@@ -15,7 +15,7 @@ export default function GridPostsList(props: GridPostsListProps) {
   const ref = useRef(null)
   const noPosts = !props.isLoading && props.posts && props.posts.length === 0
   return (
-    <div className="h-full overflow-y-auto" ref={ref}>
+    <div className="h-full w-full overflow-y-auto" ref={ref}>
       <FilterChips />
       {noPosts && (
         <div className="flex flex-col gap-4 w-full justify-start items-center p-8 text-xl dark:text-dark-4">
@@ -48,7 +48,7 @@ export default function GridPostsList(props: GridPostsListProps) {
             color="blue"
             label="More items"
             onClick={props.isLoading ? () => {} : props.onMoreItemsClick}
-            className="my-4 mx-2 w-36"
+            className="my-4 mx-2 mb-20 w-36"
           />
         </div>
       )}

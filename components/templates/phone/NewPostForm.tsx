@@ -141,7 +141,7 @@ export default function NewPostForm(props: CreatePostProps) {
         label="Description"
         onChange={handleChange}
       />
-      <Button label="Save" color="green" onClick={submit} />
+      <Button label="Save" color="green" onClick={submit} className={"mb-20"} />
     </div>
   )
 }

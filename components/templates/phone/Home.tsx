@@ -53,6 +53,7 @@ const Home = (props: HomeProps) => {
       "px-3",
       "flex",
       "flex-wrap",
+      "justify-center",
       "gap-3",
       "overflow-y-auto",
       "h-[calc(100vh_-_theme(space.36)_-_theme(space.14))]",
