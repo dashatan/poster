@@ -19,7 +19,7 @@ const HomePage: NextPage = () => {
   const router = useRouter()
   const [page, setPage] = useState(1)
   const [posts, setPosts] = useState<Post[]>([])
-  const [getPosts] = useLazyPostsQuery()
+  const [getPosts, { isFetching: loadingPosts }] = useLazyPostsQuery()
   const search = useAppSelector((state: RootState) => state.search.text)
   const city = useAppSelector((state: RootState) => state.search.city)
   const category = useAppSelector((state: RootState) => state.search.category)
@@ -64,6 +64,7 @@ const HomePage: NextPage = () => {
         <Home
           categories={categories?.filter((x) => x.parentSlug === "categories")}
           posts={posts || []}
+          loadingPosts={loadingPosts}
           placeHolders={{
             selectPlaceHolder: city ? beautifyWord(city) : "Region",
             searchPlaceHolder: search || "Search in posts",

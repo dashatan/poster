@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
 import { useRef } from "react"
 import IconCard from "../../molecules/cards/IconCard"
 import PostCard, { PostCardProps } from "../../molecules/cards/PostCard"
@@ -12,6 +14,7 @@ import { XCircleIcon } from "@heroicons/react/24/outline"
 export interface HomeProps {
   categories?: Category[]
   posts: PostCardProps[]
+  loadingPosts?: boolean
   placeHolders: {
     selectPlaceHolder: string
     searchPlaceHolder: string
@@ -78,12 +81,14 @@ const Home = (props: HomeProps) => {
         </div>
       </div>
       <div className={classes.body.join(" ")} ref={ref}>
-        {/* {posts && posts.length === 0 && (
-          <div className="flex flex-col gap-2 justify-center items-center p-10 text-xl dark:text-dark-4">
-            <XCircleIcon className="w-14 text-red-6 dark:text-red-5" />
-            Posts not found
+        {!props.loadingPosts && posts.length === 0 && (
+          <div className="flex flex-col gap-4 w-full justify-start items-center p-8 text-xl dark:text-dark-4">
+            <img
+              src={`${process.env.NEXT_PUBLIC_SERVICES_BASE_URL}/icons/empty-folder.webp`}
+            />
+            Nothing to show here !
           </div>
-        )} */}
+        )}
         <ViewportList viewportRef={ref} items={posts}>
           {(item, index) => {
             return (

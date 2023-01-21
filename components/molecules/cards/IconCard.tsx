@@ -8,8 +8,7 @@ export default function IconCard(props: IconCardProps) {
   const { title, onClick } = props
   const icon = props.icon
   const baseUrl = process.env.NEXT_PUBLIC_SERVICES_BASE_URL
-  console.log(process.env.NODE_ENV)
-  const url = `${baseUrl}/icons/${icon}.svg#${icon}`
+  const url = `/icons/${icon}.svg#${icon}`
   return (
     <div
       className="flex flex-col items-center justify-between w-12 gap-2"
