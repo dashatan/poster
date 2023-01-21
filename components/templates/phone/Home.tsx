@@ -11,6 +11,7 @@ import Category from "../../../utils/types/Category"
 import Button from "components/atoms/buttons/Button"
 import { XCircleIcon } from "@heroicons/react/24/outline"
 import FilterChips from "components/organisms/FilterChips"
+import GridPostsList from "components/organisms/GridPostsList"
 
 export interface HomeProps {
   categories?: Category[]
@@ -26,7 +27,7 @@ export interface HomeProps {
 
 const Home = (props: HomeProps) => {
   const router = useRouter()
-  const { placeHolders, categories, posts, onIconCardClick, onMoreItemsClick } = props
+  const { placeHolders, categories, posts, onIconCardClick } = props
   const ref = useRef(null)
 
   const classes = {
@@ -82,39 +83,11 @@ const Home = (props: HomeProps) => {
         </div>
       </div>
       <div className={classes.body.join(" ")} ref={ref}>
-        <FilterChips />
-        {!props.loadingPosts && posts.length === 0 && (
-          <div className="flex flex-col gap-4 w-full justify-start items-center p-8 text-xl dark:text-dark-4">
-            <img
-              src={`${process.env.NEXT_PUBLIC_SERVICES_BASE_URL}/icons/empty-folder.webp`}
-            />
-            Nothing to show here !
-          </div>
-        )}
-        <ViewportList viewportRef={ref} items={posts}>
-          {(item, index) => {
-            return (
-              <PostCard
-                key={index}
-                title={item.title}
-                topDescription={item.topDescription}
-                middleDescription={item.middleDescription}
-                bottomDescription={item.bottomDescription}
-                thumbnail={item.thumbnail}
-              />
-            )
-          }}
-        </ViewportList>
-        <div className="flex justify-center items-center mb-20">
-          {posts.length > 0 && (
-            <Button
-              color="blue"
-              label="More items"
-              onClick={props.loadingPosts ? () => {} : onMoreItemsClick}
-              loading={props.loadingPosts}
-            />
-          )}
-        </div>
+        <GridPostsList
+          posts={posts}
+          isLoading={props.loadingPosts}
+          onMoreItemsClick={props.onMoreItemsClick}
+        />
       </div>
     </>
   )
