@@ -12,7 +12,7 @@ export default function IconCard(props: IconCardProps) {
   const baseUrl = process.env.NEXT_PUBLIC_SERVICES_BASE_URL
   const url = `${baseUrl}/icons/${icon}.svg#${icon}`
   return (
-    <div
+    <button
       className="flex flex-col items-center justify-between w-12 gap-2"
       onClick={onClick}
     >
@@ -25,6 +25,6 @@ export default function IconCard(props: IconCardProps) {
       <div className="flex justify-center w-10 text-sm text-dark-9 dark:text-dark-4">
         <span>{title}</span>
       </div>
-    </div>
+    </button>
   )
 }
