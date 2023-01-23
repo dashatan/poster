@@ -60,28 +60,13 @@ export default function DesktopTopHeader(props: DesktopTopHeaderProps) {
             }
             label="region"
           />
-          <ModalButton
-            button={
-              <SimpleButton
-                label="Categories"
-                Icon={ChevronDownIcon}
-                IconClassName="w-4 h-4"
-                className="flex-row-reverse gap-2"
-                color="none"
-              />
-            }
-            content={
-              <ModalSelectiveList
-                data={categories}
-                heading="Categories"
-                url="categories"
-                onChange={(item) => {
-                  dispatch(SearchSlice.actions.category(item.slug))
-                  router.push("/")
-                }}
-              />
-            }
-            label="category"
+          <SimpleButton
+            label="Categories"
+            Icon={ChevronDownIcon}
+            IconClassName="w-4 h-4"
+            className="flex-row-reverse gap-2"
+            color="none"
+            onClick={() => router.push("/")}
           />
         </div>
         <SearchField
