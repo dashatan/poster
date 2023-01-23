@@ -85,11 +85,14 @@ export default function Create() {
         <DesktopLayout
           top={<DesktopTopHeader />}
           side={
-            <div
-              className="text-xl text-light-8 flex flex-col justify-start items-center w-full h-full bg-contain bg-no-repeat bg-center"
-              // style={{ backgroundImage: "url('/post-office-flat.jpg')" }}
-            >
-              <img src="/post-office-flat.jpg" className="w-full" />
+            <div className="text-xl text-light-8 flex flex-col justify-start items-center w-full h-full bg-contain bg-no-repeat bg-center">
+              <img
+                src={
+                  process.env.NEXT_PUBLIC_SERVICES_BASE_URL +
+                  "/icons/post-office-flat.jpg"
+                }
+                className="w-full"
+              />
               <span>Add Your post to poster</span>
             </div>
           }
