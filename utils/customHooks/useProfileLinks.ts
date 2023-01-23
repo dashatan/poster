@@ -10,10 +10,12 @@ import {
 } from "@heroicons/react/24/outline"
 import { useRouter } from "next/router"
 import useUser from "./useUser"
+import useResponsive from "utils/customHooks/useResponsive"
 
 export default function useProfileLinks() {
   const router = useRouter()
   const { logout } = useUser()
+  const { isMobile } = useResponsive()
   const route = {
     profile: () => router.replace("/profile"),
     signin: () => router.replace("/profile/signin"),
@@ -25,7 +27,7 @@ export default function useProfileLinks() {
   }
   const links: LinkType[] = [
     { title: "divider" },
-    { title: "Posts", Icon: PhotoIcon, onClick: route.posts },
+    { title: "Posts", Icon: PhotoIcon, onClick: isMobile ? route.posts : route.profile },
     { title: "Favorites", Icon: HeartIcon, onClick: () => {} },
     { title: "Recent Views", Icon: ClockIcon, onClick: () => {} },
     { title: "Settings", Icon: CogIcon, onClick: route.settings },

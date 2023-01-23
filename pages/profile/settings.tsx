@@ -2,14 +2,18 @@
 import { CameraIcon, UserIcon } from "@heroicons/react/24/outline"
 import Button from "components/atoms/buttons/Button"
 import Divider from "components/atoms/Divider"
+import DesktopLayout from "components/layouts/DesktopLayout"
+import FullScreenError from "components/layouts/FullScreenError"
 import FullScreenLoading from "components/layouts/FullScreenLoading"
 import FullScreenModal from "components/layouts/FullScreenModal"
 import Avatar from "components/molecules/cards/Avatar"
 import TextField from "components/molecules/inputs/TextField"
+import DesktopTopHeader from "components/organisms/headers/DesktopTopHeader"
 import { useRouter } from "next/router"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
 import useAuth from "utils/customHooks/useAuth"
 import useLocalStorage from "utils/customHooks/useLocalStorage"
+import useResponsive from "utils/customHooks/useResponsive"
 import useUser from "utils/customHooks/useUser"
 import { useUserUpdateMutation } from "utils/services/auth"
 import { useUploadFileMutation } from "utils/services/files"
@@ -18,6 +22,7 @@ export interface settingsProps {}
 export default function Settings(props: settingsProps) {
   const router = useRouter()
   const { userToken } = useAuth()
+  const { isMobile } = useResponsive()
   const { isLoading, user } = useUser()
   const [userUpdate, { isLoading: sending }] = useUserUpdateMutation()
   const [imageUpload, { isLoading: uploading }] = useUploadFileMutation()
@@ -56,25 +61,31 @@ export default function Settings(props: settingsProps) {
   }
 
   if (isLoading) return <FullScreenLoading />
-  if (!user)
-    return (
-      <FullScreenModal heading="Settings">
-        <div>Something went wrong</div>
-      </FullScreenModal>
-    )
 
-  return (
-    <FullScreenModal heading="Settings">
-      <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start gap-4">
-        <div className="flex flex-col justify-center items-center gap-2">
-          <Avatar src={avatar} onChange={handleChange} />
-          <div className="text-sm">Change profile picture</div>
-        </div>
-        <Divider space="4" />
-        <TextField label="name" value={name} onChange={(key, value) => setName(value)} />
-        <Divider space="4" />
-        <Button color="blue" label="update" onClick={submit} loading={sending} />
+  if (!user) return <FullScreenError />
+
+  const SettingsComp = (
+    <div className="p-6 h-full overflow-y-auto hide-scrollbar flex flex-col justify-start gap-4">
+      <div className="flex flex-col justify-center items-center gap-2">
+        <Avatar src={avatar} onChange={handleChange} />
+        <div className="text-sm">Change profile picture</div>
       </div>
-    </FullScreenModal>
+      <Divider space="4" />
+      <TextField label="name" value={name} onChange={(key, value) => setName(value)} />
+      <Divider space="4" />
+      <Button color="blue" label="update" onClick={submit} loading={sending} />
+    </div>
   )
+  if (!isMobile)
+    return (
+      <DesktopLayout
+        top={<DesktopTopHeader />}
+        main={
+          <div className="h-full w-full flex justify-center overflow-y-auto hide-scrollbar">
+            <div className="w-96 h-full">{SettingsComp}</div>
+          </div>
+        }
+      />
+    )
+  return <FullScreenModal heading="Settings">{SettingsComp}</FullScreenModal>
 }

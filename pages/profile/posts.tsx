@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import FullScreenModal from "components/layouts/FullScreenModal"
 import GridPostsList from "components/organisms/GridPostsList"
 import { useRouter } from "next/router"
@@ -34,6 +35,7 @@ export default function Posts(props: postsProps) {
   useEffect(() => {
     if (isLoggedIn === false) route.signin()
   }, [isLoggedIn])
+
   return (
     <FullScreenModal heading="Posts">
       <GridPostsList posts={posts} isLoading={loadingPosts} onPostClick={route.post} />
