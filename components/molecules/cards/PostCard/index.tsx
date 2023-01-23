@@ -9,11 +9,13 @@ import PostCardTip from "./PostCardTip"
 import PostCardTitle from "./PostCardTitle"
 
 export interface PostCardProps {
+  id: string | number
   title: string
   topDescription?: string
   middleDescription?: string
   bottomDescription?: string
   thumbnail?: string
+  onClick: () => void
 }
 
 export default function PostCard(props: PostCardProps) {
@@ -25,7 +27,7 @@ export default function PostCard(props: PostCardProps) {
     <PostCardImagePlaceHolder />
   )
   return (
-    <PostCardContainer>
+    <PostCardContainer onClick={props.onClick}>
       <PostCardBody>
         <PostCardTitle>{title}</PostCardTitle>
         <div>

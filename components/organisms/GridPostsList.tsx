@@ -4,16 +4,19 @@ import Button from "components/atoms/buttons/Button"
 import PostCard, { PostCardProps } from "components/molecules/cards/PostCard"
 import { useRef } from "react"
 import ViewportList from "react-viewport-list"
+import Post from "utils/types/Post"
 import FilterChips from "./FilterChips"
 
 export interface GridPostsListProps {
-  posts?: PostCardProps[]
+  posts?: Post[]
   onMoreItemsClick?: () => void
+  onPostClick?: (id: string) => void
   isLoading?: boolean
 }
 export default function GridPostsList(props: GridPostsListProps) {
+  const { posts, isLoading } = props
   const ref = useRef(null)
-  const noPosts = !props.isLoading && props.posts && props.posts.length === 0
+  const noPosts = !isLoading && posts && posts.length === 0
   return (
     <div className="h-full w-full overflow-y-auto" ref={ref}>
       <FilterChips />
@@ -26,22 +29,25 @@ export default function GridPostsList(props: GridPostsListProps) {
         </div>
       )}
       <div className="flex flex-wrap gap-y-4 w-full content-start">
-        {props.posts?.map((item, index) => {
-          return (
-            <div key={index} className="w-full md:w-full lg:w-1/2 xl:w-1/3 h-40 p-2">
-              <PostCard
-                key={index}
-                title={item.title}
-                topDescription={item.topDescription}
-                middleDescription={item.middleDescription}
-                bottomDescription={item.bottomDescription}
-                thumbnail={item.thumbnail}
-              />
-            </div>
-          )
-        })}
+        {posts &&
+          posts.map((item, index) => {
+            return (
+              <div key={index} className="w-full md:w-full lg:w-1/2 xl:w-1/3 h-40 p-2">
+                <PostCard
+                  key={item._id}
+                  id={item._id}
+                  title={item.title}
+                  topDescription={item.topDescription}
+                  middleDescription={item.middleDescription}
+                  bottomDescription={item.bottomDescription}
+                  thumbnail={item.thumbnail}
+                  onClick={() => props.onPostClick && props.onPostClick(item._id)}
+                />
+              </div>
+            )
+          })}
       </div>
-      {props.posts && props.posts.length > 0 && (
+      {posts && posts.length > 0 && (
         <div className="w-full">
           <Button
             loading={props.isLoading}

@@ -12,10 +12,11 @@ import Button from "components/atoms/buttons/Button"
 import { XCircleIcon } from "@heroicons/react/24/outline"
 import FilterChips from "components/organisms/FilterChips"
 import GridPostsList from "components/organisms/GridPostsList"
+import Post from "utils/types/Post"
 
 export interface HomeProps {
   categories?: Category[]
-  posts: PostCardProps[]
+  posts: Post[]
   loadingPosts?: boolean
   placeHolders: {
     selectPlaceHolder: string
@@ -87,6 +88,7 @@ const Home = (props: HomeProps) => {
         <GridPostsList
           posts={posts}
           isLoading={props.loadingPosts}
+          onPostClick={(id) => router.push("/posts/" + id)}
           onMoreItemsClick={props.onMoreItemsClick}
         />
       </div>

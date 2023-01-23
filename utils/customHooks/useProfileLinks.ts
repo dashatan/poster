@@ -18,13 +18,14 @@ export default function useProfileLinks() {
     profile: () => router.replace("/profile"),
     signin: () => router.replace("/profile/signin"),
     settings: () => router.push("/profile/settings"),
+    posts: () => router.push("/profile/posts"),
   }
   function logOut() {
     logout().then(() => route.signin())
   }
   const links: LinkType[] = [
     { title: "divider" },
-    { title: "Posts", Icon: PhotoIcon, onClick: () => {} },
+    { title: "Posts", Icon: PhotoIcon, onClick: route.posts },
     { title: "Favorites", Icon: HeartIcon, onClick: () => {} },
     { title: "Recent Views", Icon: ClockIcon, onClick: () => {} },
     { title: "Settings", Icon: CogIcon, onClick: route.settings },

@@ -9,12 +9,13 @@ import useResponsive from "utils/customHooks/useResponsive"
 import DesktopLayout from "components/layouts/DesktopLayout"
 import DesktopTopHeader from "components/organisms/headers/DesktopTopHeader"
 import DesktopMainSideBar from "components/organisms/sidebars/DesktopMainSideBar"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import GridPostsList from "components/organisms/GridPostsList"
 import { beautifyWord } from "components/molecules/cards/FormFieldCard"
 import { useAppSelector } from "utils/hooks"
-import { useLazyPostsQuery, usePostsQuery } from "utils/services/posts"
+import { useLazyPostsQuery } from "utils/services/posts"
 import Post from "utils/types/Post"
+import usePrevious from "utils/customHooks/usePrevious"
 
 const HomePage: NextPage = () => {
   const router = useRouter()
@@ -26,36 +27,23 @@ const HomePage: NextPage = () => {
   const category = useAppSelector((state: RootState) => state.search.category)
   const { data: categories } = useCategoriesQuery()
   const { isLoading, isMobile } = useResponsive()
+  const prevPage = usePrevious(page)
 
   useEffect(() => {
-    console.log("category changed")
+    const pageChanged = prevPage !== page
+    !pageChanged && setPage(1)
     getPosts({
       limit: isMobile ? 6 : 12,
       sort: "createdAt:desc",
-      page,
-      search,
+      page: pageChanged ? page : 1,
       filters: [
         { key: "cityId", value: city },
         { key: "categoryId", value: category },
       ],
     }).then(({ data }) => {
-      if (data) setPosts(data)
+      if (data) setPosts((posts) => (pageChanged ? [...posts, ...data] : [...data]))
     })
-  }, [category, city, search])
-
-  useEffect(() => {
-    getPosts({
-      limit: isMobile ? 6 : 12,
-      sort: "createdAt:desc",
-      page,
-      filters: [
-        { key: "cityId", value: city },
-        { key: "categoryId", value: category },
-      ],
-    }).then(({ data }) => {
-      if (data) setPosts((posts) => [...posts, ...data])
-    })
-  }, [page])
+  }, [page, category, city, search])
 
   function handleMoreItems() {
     setPage((page) => page + 1)
@@ -71,6 +59,7 @@ const HomePage: NextPage = () => {
             posts={posts}
             onMoreItemsClick={handleMoreItems}
             isLoading={loadingPosts}
+            onPostClick={(id) => router.push("/posts/" + id)}
           />
         }
         top={<DesktopTopHeader />}
