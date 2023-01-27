@@ -18,7 +18,6 @@ export default function postQuery(args: postQueryArgs) {
                       title
                     }
                     bottomDescription
-                    bottomDescription
                 }
             }`
 }
